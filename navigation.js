@@ -20,6 +20,7 @@ import MessageChat from './screens/MessageChat';
 import PostBlog from './screens/PostBlog';
 import BlogDetail from './screens/BlogDetail';
 import Detail from './screens/Detail';
+import Yourchart from './screens/Yourchart';
 
 const AuthStack = createStackNavigator({
   Landing: {
@@ -67,7 +68,13 @@ const AuthStack = createStackNavigator({
 })
 
 const AppStack = createStackNavigator({
-  
+   
+  Yourchart: {
+    screen: Yourchart,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
   Detail: {
     screen: Detail,
     navigationOptions: {
