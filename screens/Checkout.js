@@ -5,20 +5,22 @@ import {
   View,
   TouchableOpacity,
   FlatList,
-  Text,
+  Text,Switch,
   ScrollView
 } from 'react-native'
-import { SearchBar, Icon , Input } from 'react-native-elements'
+import { SearchBar, Icon , Input  } from 'react-native-elements'
 import CustomButton from '../Component/Button'
 import CustomHeader from '../Component/header'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { Picker } from 'native-base'
 import { themeColor, pinkColor } from '../Constant'
-class EditProfile extends React.Component {
+import countries from '../Constant/countries';
+class Checkout extends React.Component {
     constructor (props) {
         super(props)
         this.state = {
-          selected: 'key1'
+          selected: '1',
+          switch : false
         }
       }
       static navigationOptions = {
@@ -33,61 +35,77 @@ class EditProfile extends React.Component {
     const { navigation } = this.props
     return (
       <ScrollView stickyHeaderIndices = {[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader navigation = {navigation} title={'Edit PROFILE'} />
-        <View style={{ alignSelf: 'center', width: '100%', alignItems: 'center' ,
-         paddingBottom : 25 ,borderBottomColor : "#444B60" , borderBottomWidth: 0.5, }} >
-          <View style={styles.imageWrapper} >
-            <Image
-              source={require('../assets/avatar.png')}
-              style={[styles.imageStyle]}/>
-          </View>
-          <TouchableOpacity>
-          <Text style={{ color: pinkColor, fontSize: 15 , marginTop: -12, }}>  Change Profile Picture  </Text>
-              </TouchableOpacity>
-
-          </View>
+        <CustomHeader navigation = {navigation} title={'Check Out'} />
               <Input 
-                placeholder = {"Johndoe66"}
+                placeholder = {"Name on Card"}
                 containerStyle = {{width : "100%" , }}
                 inputStyle = {styles.inputStyle}
                 placeholderTextColor = {"#bbb"}
                 inputContainerStyle = {styles.inputContainer} />
+                <Input 
+                placeholder = {"Card Number"}
+                containerStyle = {{width : "100%" , }}
+                inputStyle = {styles.inputStyle}
+                keyboardType = {'numeric'}
+                placeholderTextColor = {"#bbb"}
+                inputContainerStyle = {styles.inputContainer} />
+
+                <View style = {{flexDirection : 'row' , borderBottomColor  : "#444B60" , borderBottomWidth : 5 , }}> 
+                <Input 
+                placeholder = {"MM/YY"}
+                containerStyle = {{width : "50%" , borderRightColor : 'grey' , borderRightWidth : 0.5 }}
+                inputStyle = {styles.inputStyle}
+                placeholderTextColor = {"#bbb"}
+                inputContainerStyle = {styles.inputContainer} />
+                <Input 
+                placeholder = {"CVV"}
+                containerStyle = {{width : "50%" , }}
+                inputStyle = {styles.inputStyle}
+                keyboardType = {'numeric'}
+                placeholderTextColor = {"#bbb"}
+                inputContainerStyle = {styles.inputContainer} />
+                </View>
+
+                <View  style={[styles.picker , {flexDirection : 'row' ,  justifyContent  : 'space-between' , alignItems : 'center'}]} >
+                   <Text style = {{color : '#bbb' , fontSize : 16 , paddingLeft: 5 ,}}>Same with delivery address</Text>
+                    <Switch value = {this.state.switch} onChange = {()=> this.setState({switch :!this.state.switch })} />
+                </View>
                 <View  style={styles.picker} >
           <Picker
             note
             mode='dropdown'
-            style={{ width: '50%', color: '#bbb'  , alignItems : "flex-end"}}
+            style={{ width: '100%', color: '#bbb'  , alignItems : "flex-end"}}
             selectedValue={this.state.selected}
             onValueChange={this.onValueChange.bind(this)}
           >
-            <Picker.Item label='New Country' value='key0' />
-            <Picker.Item label='ATM Card' value='key1' />
-            <Picker.Item label='Debit Card' value='key2' />
-            <Picker.Item label='Credit Card' value='key3' />
-            <Picker.Item label='Net Banking' value='key4' />
+            <Picker.Item label='Country' key = {1} />
+            {
+             Object.keys(countries).map((country , index)=> <Picker.Item label={countries[country]} key = {country} />)  
+            }
           </Picker>
         </View>
                  <Input 
-                placeholder = {"Toronto , Canada"}
+                placeholder = {"Address"}
                 containerStyle = {{width : "100%" , }}
                 inputStyle = {styles.inputStyle}
                 placeholderTextColor = {"#bbb"}
                 inputContainerStyle = {styles.inputContainer} />
                  <Input 
-                placeholder = {"Johndoe66"}
+                placeholder = {"City"}
                 containerStyle = {{width : "100%" , }}
                 inputStyle = {styles.inputStyle}
                 placeholderTextColor = {"#bbb"}
                 inputContainerStyle = {styles.inputContainer} />
-                <View style = {{borderBottomColor  : "#444B60" , borderBottomWidth : 5 , height : 60 ,
-                 justifyContent : "center" , alignItems : "center",borderTopColor  : "#444B60" , borderTopWidth : 5}}>
-                    
-                   <TouchableOpacity>
-                        <Text style = {{color :'#A05669'}}>Delete Account</Text> 
-                        </TouchableOpacity>
-                    </View>
-                    <View style = {{marginVertical : 15}}>
-                        <CustomButton title = {"Save"} backgroundColor = {pinkColor}  containerStyle = {{width : "90%"}}/>
+                 <Input 
+                placeholder = {"Postal Code"}
+                keyboardType = {'numeric'}
+                containerStyle = {{width : "100%" , }}
+                inputStyle = {styles.inputStyle}
+                placeholderTextColor = {"#bbb"}
+                inputContainerStyle = {styles.inputContainer} />
+                <View style = {{marginVertical : 25}}>
+                    <CustomButton  title = {'Check Out'} backgroundColor = {pinkColor} 
+        containerStyle = {[{width : '90%' }]} />
                     </View>
                 
       </ScrollView>
@@ -107,7 +125,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   picker :{
-    width: '94%',
+    width: '99%',
     alignSelf: 'center',
     paddingHorizontal: 4,
     backgroundColor: themeColor,
@@ -132,8 +150,8 @@ const styles = StyleSheet.create({
    borderTopColor : "#ccc" , borderBottomColor : "#BBB" , borderWidth : 0.5},
    heading : {color : "grey" , fontSize : 14 ,  fontWeight : "bold" , margin : 4},
    number : {color : "#fff" , fontSize : 16 , textAlign : "center"},
-   inputStyle : {textAlign : "right" , color : "#ccc", fontSize : 15},
+   inputStyle : {  color : "#ccc", fontSize : 15},
    inputContainer : {backgroundColor : themeColor ,height : 60,borderBottomColor : "#444B60" , borderBottomWidth: 0.5,
 },
 })
-export default EditProfile
+export default Checkout

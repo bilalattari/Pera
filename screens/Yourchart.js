@@ -31,7 +31,7 @@ class Yourchart extends React.Component {
     let { next } = this.state
     return (
       <ScrollView stickyHeaderIndices = {[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader title={'Your Chart'}  />
+        <CustomHeader navigation = {navigation} title={'Your Chart'}  />
 
     {
         next ? 

@@ -35,7 +35,7 @@ _icon = (name , color) =>
     let { follow } = this.state
     return (
       <ScrollView stickyHeaderIndices = {[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader title={'BLOG'} home = {true} bookmark = {true}  />
+        <CustomHeader title={'BLOG'} navigation = {navigation} home = {true} bookmark = {true}  />
         <View style={styles.title}>
         <View style = {{flexDirection : 'row'  ,alignItems: 'center'}}>
 <Image

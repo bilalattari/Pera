@@ -33,7 +33,7 @@ class Cart extends React.Component {
     const { navigation } = this.props
     return (
       <View style={{ flex: 1 }}>
-        <CustomHeader home title={'Cart'} />
+        <CustomHeader navigation = {navigation} home title={'Cart'} />
         <ScrollView>
           <ProductDescription
             title={'Medicine'}

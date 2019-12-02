@@ -36,7 +36,7 @@ class Profile extends React.Component {
     let { comments } = this.state
     return (
       <ScrollView stickyHeaderIndices = {[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader title={'PROFILE'} rightIcon />
+        <CustomHeader title={'PROFILE'} rightIcon navigation = {navigation} />
         <View style={{ alignSelf: 'center', width: '60%', alignItems: 'center' }} >
           <View style={styles.imageWrapper} >
             <Image

@@ -21,6 +21,8 @@ import PostBlog from './screens/PostBlog';
 import BlogDetail from './screens/BlogDetail';
 import Detail from './screens/Detail';
 import Yourchart from './screens/Yourchart';
+import Checkout from './screens/Checkout';
+import MyOrders from './screens/MyOrders';
 
 const AuthStack = createStackNavigator({
   Landing: {
@@ -68,7 +70,19 @@ const AuthStack = createStackNavigator({
 })
 
 const AppStack = createStackNavigator({
-   
+  
+  MyOrders : {
+    screen: MyOrders,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
+  Checkout : {
+    screen: Checkout,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
   Yourchart: {
     screen: Yourchart,
     navigationOptions: {
@@ -132,7 +146,8 @@ const AppStack = createStackNavigator({
     }
   },
   
-})
+  
+} , {initialRouteName : 'Feedback'})
 
 const App = createSwitchNavigator({
   Auth: {

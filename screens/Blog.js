@@ -31,7 +31,7 @@ _icon = (name , color) =>
 </TouchableOpacity>
 
 blog = (item , index)=>
-<View style = {{width : '100%' ,  paddingHorizontal : '2%' ,marginBottom: 25,}}>
+<TouchableOpacity onPress = {()=> this.props.navigation.navigate('BlogDetail')} style = {{width : '100%' ,  paddingHorizontal : '2%' ,marginBottom: 25,}}>
 <View style={styles.title}>
 <View style = {{flexDirection : 'row'  ,alignItems: 'center'}}>
 <Image
@@ -61,13 +61,13 @@ blog = (item , index)=>
 
         </View>
 
-</View>
+</TouchableOpacity>
   render () {
     const { navigation } = this.props
     let { follow } = this.state
     return (
       <ScrollView stickyHeaderIndices = {[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader title={'BLOG'}  />
+        <CustomHeader title={'BLOG'} navigation = {navigation}  />
 
         <FlatList
             data={['1', '2', '3', '4', '5', '6', '7']}

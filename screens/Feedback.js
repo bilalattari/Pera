@@ -10,9 +10,13 @@ import {
 } from 'react-native'
 import { SearchBar, Icon } from 'react-native-elements'
 import CustomInput from '../Component/Input'
+import ControlPanel from '../screens/ControlPanel'
 import CustomButton from '../Component/Button'
+import {NavigationEvents} from 'react-navigation';
+
 import CustomHeader from '../Component/header'
 import { SwipeListView } from 'react-native-swipe-list-view'
+import Drawer from 'react-native-drawer'
 
 import { themeColor, pinkColor } from '../Constant'
 class Feedback extends React.Component {
@@ -25,7 +29,13 @@ class Feedback extends React.Component {
   static navigationOptions = {
     header: null
   }
-
+  
+  closeControlPanel = () => {
+    this._drawer.close()
+  };
+  openControlPanel = () => {
+    this._drawer.open()
+  };
   swipListItem = (item, index) => (
     <View
       style={[
@@ -97,8 +107,22 @@ class Feedback extends React.Component {
     const { navigation } = this.props
     let { comments } = this.state
     return (
+              <Drawer
+        ref={(ref) => this._drawer = ref}
+        type="overlay"
+  tapToClose={true}
+  openDrawerOffset={0.2} // 20% gap on the right side of drawer
+  panCloseMask={0.2}
+  closedDrawerOffset={-3}
+  styles={styles.drawer}
+  tweenHandler={(ratio) => ({
+    main: { opacity:(2-ratio)/2 }
+  })}
+        content={<ControlPanel />}
+        >
+          <NavigationEvents onDidFocus = {()=> this.closeControlPanel()} />
       <View style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader home title={comments ? 'Comments' : 'Feedback'} />
+        <CustomHeader home title={comments ? 'Comments' : 'Feedback'} onPress = {()=>this.openControlPanel()} />
         <SearchBar
           containerStyle={{
             margin: 8,
@@ -161,6 +185,7 @@ class Feedback extends React.Component {
           />
         )}
       </View>
+      </Drawer>
     )
   }
 }
@@ -169,6 +194,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
+  main: {paddingLeft: 3},
   imageStyle: {
     height: 45,
     width: 45,

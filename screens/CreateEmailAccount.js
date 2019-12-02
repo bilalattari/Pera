@@ -19,7 +19,7 @@ import CustomButton from '../Component/Button'
       const {navigation} = this.props
         return (
             <View style={{backgroundColor : '#323643' , flex : 1 }}>
-                <CustomHeader title = {'Sign Up'} />
+                <CustomHeader navigation = {navigation} title = {'Sign Up'} />
                  <View style = {{flex : 1 , alignItems : 'center' ,  justifyContent : "flex-end"}}>
                      <Input placeholder = {'Email'} placeholderTextColor = {'#fff'} 
                      inputContainerStyle = {styles.inputContainer} inputStyle = {{fontWeight : 'bold'}} />

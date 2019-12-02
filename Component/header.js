@@ -10,7 +10,8 @@ export default (CustomHeader = props => (
       barStyle='light-content' // or directly
       containerStyle={{ backgroundColor: themeColor , borderBottomColor : themeColor }}
       leftComponent={
-          { icon: props.home ? 'menu' : 'arrow-back', color: '#fff' , onPress : ()=> props.navigation.goBack() }
+          { icon: props.home ? 'menu' : 'arrow-back', color: '#fff' ,
+           onPress : ()=> props.home ?  props.onPress()  :  props.navigation.goBack() }
       }
       centerComponent={{
         text: props.title,

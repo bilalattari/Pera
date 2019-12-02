@@ -30,6 +30,7 @@ class ChangeAccountPassword extends React.Component {
     return (
       <View style={styles.container}>
         <CustomHeader
+        navigation = {navigation}
           title={'Change Account Password'}
           openMenu={() => this.props.navigation.navigate('Homw')}
         />
