@@ -3,7 +3,7 @@ import {
     StyleSheet,
     View,TouchableOpacity,
     Text,FlatList,ScrollView,TouchableWithoutFeedback,
-    Image
+    Image , StatusBar
 } from 'react-native';
 import CustomInput from '../Component/Input'
 import CustomButton from '../Component/Button'
@@ -47,9 +47,10 @@ render() {
       const {navigation} = this.props.navigation
         return (
           <View style = {styles.container}>
-              <View style = {{height : 60 , flexDirection : 'row' , alignItems : 'center' ,
+         <StatusBar backgroundColor={themeColor} translucent />
+              <View style = {{height : 100 , flexDirection : 'row' , alignItems : 'center' ,
                  justifyContent : 'space-between' , marginHorizontal : 15 ,}}>
-                    <Text style = {{color : '#fff' , fontSize : 25 , fontWeight : 'bold'}}>Messages</Text>
+                    <Text style = {{color : '#fff' , fontSize : 25 , fontWeight : 'bold' , marginTop : 12}}>Messages</Text>
                  </View>
               <SearchBar
           containerStyle={{

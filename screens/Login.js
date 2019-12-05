@@ -16,7 +16,7 @@ import {Icon , Input , Button} from 'react-native-elements'
       const {navigation} = this.props
         return (
             <ScrollView style={{backgroundColor : '#323643'}}>
-                <View style = {{height : 60 , flexDirection : 'row' , alignItems : 'center' ,
+                <View style = {{height : 100 , flexDirection : 'row' , alignItems : 'center' ,
                  justifyContent : 'space-between' , marginHorizontal : 15 ,}}>
                     <Text style = {{color : '#fff' , fontSize : 25 , fontWeight : 'bold'}}>Login</Text>
                     <Icon type = {'font-awesome'} name  = {'angle-left'} color = {'#fff'} containerStyle = {{marginTop : 8}} 
@@ -48,7 +48,7 @@ import {Icon , Input , Button} from 'react-native-elements'
                          <Text style = {styles.bottomLink}>Need An Account ?<Text style = {{color : '#FD7496' }}>  Sign Up</Text></Text>
                          </TouchableOpacity>
                        <TouchableOpacity onPress = {()=> this.props.navigation.navigate("ForgotPassword")} style = {{height : 30 , justifyContent : "center"}}>
-                         <Text style = { [styles.bottomLink ,{marginTop : 12} ]}>Forget Your Password ?<Text style = {{color : '#FD7496' }}>  Retrive</Text></Text>
+                         <Text style = { [styles.bottomLink ,{marginVertical : 12} ]}>Forget Your Password ?<Text style = {{color : '#FD7496' }}>  Retrive</Text></Text>
                          </TouchableOpacity>
                      </View>
 

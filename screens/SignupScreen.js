@@ -19,7 +19,7 @@ class SignUp extends React.Component {
       const {navigation} = this.props
         return (
             <View style={{backgroundColor : '#323643' , flex : 1}}>
-                <View style = {{height : 60 , flexDirection : 'row' , alignItems : 'center' ,
+                <View style = {{height : 100 , flexDirection : 'row' , alignItems : 'center' ,
                  justifyContent : 'space-between' , marginHorizontal : 15 ,}}>
                     <Text style = {{color : '#fff' , fontSize : 25 , fontWeight : 'bold'}}>Sign Up</Text>
                     <Icon type = {'font-awesome'} name  = {'angle-left'} color = {'#fff'} containerStyle = {{marginTop : 8}} 

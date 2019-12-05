@@ -39,8 +39,7 @@ class Detail extends React.Component {
     let { follow } = this.state
     return (
       <ScrollView stickyHeaderIndices = {[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader title={'DETAIL'}  />
-
+        <CustomHeader title={'DETAIL'} navigation = {navigation}  />
         <ImageBackground source = {{uri : ''}} style = {{height : 250 , width : '100%' , backgroundColor : '#ccc' , justifyContent : 'space-between'}} resizeMode = 'stretch' >
           <View style = {{justifyContent : 'space-between' , flexDirection  : 'row' , marginHorizontal : 5 , marginTop : 5}}>
             <TouchableOpacity style = {styles.imageBtn}>

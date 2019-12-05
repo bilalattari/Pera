@@ -23,6 +23,13 @@ import Detail from './screens/Detail';
 import Yourchart from './screens/Yourchart';
 import Checkout from './screens/Checkout';
 import MyOrders from './screens/MyOrders';
+import AddPhoto from './screens/AddPhoto';
+import MyAddress from './screens/MyAddress';
+import Payment from './screens/Payment';
+import SelectBlog from './screens/SelectBlog';
+import BlogCategory from './screens/BlogCategory';
+import Privacy from './screens/Privacy';
+import Support from './screens/Support';
 
 const AuthStack = createStackNavigator({
   Landing: {
@@ -71,6 +78,42 @@ const AuthStack = createStackNavigator({
 
 const AppStack = createStackNavigator({
   
+  Payment : {
+    screen: Payment,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
+  Support : {
+    screen: Support,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
+  BlogCategory : {
+    screen: BlogCategory,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
+  SelectBlog : {
+    screen: SelectBlog,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
+  MyAddress : {
+    screen: MyAddress,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
+  AddPhoto : {
+    screen: AddPhoto,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
   MyOrders : {
     screen: MyOrders,
     navigationOptions: {
@@ -95,6 +138,13 @@ const AppStack = createStackNavigator({
       headerTitle: 'Feedback'
     }
   },
+  Privacy: {
+    screen: Privacy,
+    navigationOptions: {
+      headerTitle: 'Feedback'
+    }
+  },
+  
   BlogDetail: {
     screen: BlogDetail,
     navigationOptions: {
@@ -155,7 +205,7 @@ const App = createSwitchNavigator({
   },
   App: {
     screen: AppStack
-  }
+  },
 })
 
 const Routes = createAppContainer(App)

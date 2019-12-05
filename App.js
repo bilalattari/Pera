@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, ScrollView } from 'react-native';
+import { Platform, StyleSheet, Text, View, ScrollView , StatusBar } from 'react-native';
 import Routes from './navigation'
-
+import {themeColor} from './Constant/index'
 export default class App extends Component {
   constructor(props){
     super(props)
@@ -10,7 +10,7 @@ export default class App extends Component {
 
   render() {
     return (
-      <Routes />
+        <Routes />
     );
   }
 }

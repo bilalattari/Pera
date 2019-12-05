@@ -49,7 +49,8 @@ class CodeConfirmation extends React.Component {
             Please enter the verification code from the sms we just sent you.
           </Text>
         </View>   
-        <Input placeholder = {'Phone Number'} keyboardType = {'numeric'} placeholderTextColor = {'#fff'} 
+        <Input placeholder = {'Phone Number'}
+         keyboardType = {'numeric'} placeholderTextColor = {'#fff'} 
          inputContainerStyle = {styles.inputContainer} inputStyle = {{fontWeight : 'bold' , fontSize :14}} />
          <View style = {{marginVertical  : 12}}>
              <CustomButton

@@ -22,9 +22,9 @@ import CustomButton from '../Component/Button'
       const {navigation} = this.props
         return (
             <ScrollView style={styles.container}>
-                <View style = {{height : 60 , flexDirection : 'row' , alignItems : 'center' ,
+                <View style = {{height : 100 , flexDirection : 'row' , alignItems : 'center' ,
                  justifyContent : 'space-between' , marginHorizontal : 15 ,}}>
-                    <Text style = {{color : '#fff' , fontSize : 25 , fontWeight : 'bold'}}>Blog</Text>
+                    <Text style = {{color : '#fff' , fontSize : 25 , fontWeight : 'bold' , marginTop : 12}}>Blog</Text>
                     <Icon type = {'font-awesome'} name  = {'angle-left'} color = {'#fff'} containerStyle = {{marginTop : 8}} 
                     size = {25} />
 

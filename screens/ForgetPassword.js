@@ -26,7 +26,7 @@ export default class ForgetPassword extends React.Component {
       let  { showModel} = this.state
         return (
           <View style={styles.container}>
-          <CustomHeader navigation = {navigation} title = {'FORGET PASSWORD'}  />
+          <CustomHeader navigation = {this.props.navigation} title = {'FORGET PASSWORD'}  />
 
           <View style = {{flex : 1 , justifyContent : 'flex-end'}}>
             {
