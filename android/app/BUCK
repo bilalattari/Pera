@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.transaction",
+    package = "com.measurment",
 )
 
 android_resource(
     name = "res",
-    package = "com.transaction",
+    package = "com.measurment",
     res = "src/main/res",
 )
 

@@ -1,4 +1,4 @@
-package com.transaction;
+package com.measurment;
 
 import com.facebook.react.ReactActivity;
 

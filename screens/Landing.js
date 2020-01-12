@@ -2,119 +2,78 @@ import React, { Fragment } from 'react';
 import {
     StyleSheet,
     View,TouchableOpacity,
-    Text,ScrollView,
+    Text,ScrollView,ImageBackground,
     Image
 } from 'react-native';
 import {withNavigation} from 'react-navigation'
-import Carousel, { ParallaxImage  , Pagination} from 'react-native-snap-carousel';
 import { Dimensions,Platform } from 'react-native';
-const { width: screenWidth } = Dimensions.get('window')
 import CustomButton from '../Component/Button'
-// import Logo from '../Component/LogoImage'
 import {themeColor, pinkColor} from '../Constant/index'
 import { Icon } from 'react-native-elements';
-// import  from '../Component/Slogan'
-export const ENTRIES1 = [
-  {
-      title: 'Beautiful and dramatic Antelope Canyon',
-      subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-      illustration: 'https://i.imgur.com/UYiroysl.jpg'
-  },
-  {
-      title: 'Earlier this morning, NYC',
-      subtitle: 'Lorem ipsum dolor sit amet',
-      illustration: 'https://i.imgur.com/UPrs1EWl.jpg'
-  },
-  {
-      title: 'White Pocket Sunset',
-      subtitle: 'Lorem ipsum dolor sit amet et nuncat ',
-      illustration: 'https://i.imgur.com/MABUbpDl.jpg'
-  },
-  {
-      title: 'Acrocorinth, Greece',
-      subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-      illustration: 'https://i.imgur.com/KZsmUi2l.jpg'
-  },
-  {
-      title: 'The lone tree, majestic landscape of New Zealand',
-      subtitle: 'Lorem ipsum dolor sit amet',
-      illustration: 'https://i.imgur.com/2nCt3Sbl.jpg'
-  },
-  {
-      title: 'Middle Earth, Germany',
-      subtitle: 'Lorem ipsum dolor sit amet',
-      illustration: 'https://i.imgur.com/lceHsT6l.jpg'
-  }
+import AppIntroSlider from 'react-native-app-intro-slider';
+const slides = [
+  require("../assets/1.png"),
+  require("../assets/2.png"),
+  require("../assets/4.png"),
+  require("../assets/3.png"),
 ];
-
+const width = Dimensions.get('window').width
+      const height = Dimensions.get('window').height
  class LandingScreen extends React.Component {
   constructor(props){
     super(props)
+    this.state = {
+      index : 0
+    }
   }
   static navigationOptions = {
     header: null
   }
-  _renderItem ({item, index}, parallaxProps) {
+  _renderItem = ({ item , index }) => {
     return (
-        <View style={styles.item}>
-            <ParallaxImage
-                source={{ uri: item.thumbnail }}
-                containerStyle={styles.imageContainer}
-                style={styles.image}
-                parallaxFactor={0.4}
-                {...parallaxProps}
-            />
-            <Pagination
-              dotsLength={ENTRIES1.length}
-              activeDotIndex={index}
-              containerStyle={{ backgroundColor: themeColor }}
-              dotStyle={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 5,
-                  marginHorizontal: 8,
-                  backgroundColor: 'rgba(255, 255, 255, 0.92)'
-              }}
-              inactiveDotStyle={{
-                  // Define styles for inactive dots here
-              }}
-              inactiveDotOpacity={0.4}
-              inactiveDotScale={0.6}
-            />
+      <View style = {{ justifyContent : 'center' , 
+      alignItems : 'center' , marginTop : '20%' }}>
+        <Image  style = {{height : height/1.45, width : height/2.35 , 
+          resizeMode : "stretch"  }} source = {slides[index]} />
         </View>
     );
-}
+  }
+  _onDone = () => {
+    this.setState({ showRealApp: true });
+  }
     render() {
+      let {index} = this.state
       const {navigation} = this.props
         return (
-          <View style={styles.container}>
-            <ScrollView>
-            <View style = {{alignItems : "center" , marginVertical : '12%'}}>
-              <Text style={{color : '#fff' , fontSize : 28 , fontWeight : 'bold'}}>Welcome</Text>
-              <Text style={{color : '#ccc'}}>It is never early to begin</Text>
-              <Text style={{color : '#ccc'}}>exploring the world</Text>
-              </View>
-          <Carousel
-              sliderWidth={screenWidth}
-              sliderHeight={screenWidth + 120}
-              itemWidth={screenWidth - 60}
-              data={ENTRIES1}
-              renderItem={this._renderItem}
-              hasParallaxImages={true}
-              />
-              </ScrollView>
-
-              <View style = {styles.bottomButtons}>
-                <TouchableOpacity style = {styles.arrowButton} >
-                    <Icon type = {'font-awesome'} name = {'arrow-left'}  color = {pinkColor} />
-                  </TouchableOpacity>
-                  <CustomButton
-                  onPress = {()=> this.props.navigation.navigate('CreateAccount')}
-                  title = {'Next'} backgroundColor = {pinkColor} 
-                  containerStyle = {{width : 90 , height : 30}}  height = {45}/>
-                </View>
-      </View>
-
+          <ImageBackground 
+          resizeMode = {"stretch"}
+          style = {{flex : 1, justifyContent : 'center' , alignItems : "center"}}
+          source = {require('../assets/bgg.png')}
+          >
+           <AppIntroSlider
+           showDoneButton = {false}
+           onSlideChange = {(index)=> this.setState({index})}
+           paginationStyle = {{marginBottom : 41 }}
+           showNextButton = {false}
+           ref={(ref) => this.intro = ref}
+           goToSlide = {index}
+           activeDotStyle = {{backgroundColor : 'red'}}
+           dotStyle = {{backgroundColor : '#ccc'}}
+           renderItem={this._renderItem} slides={slides} onDone={this._onDone}/>
+           <View style = {styles.nextView}>
+              <TouchableOpacity 
+              onPress = {()=>{this.setState({index : index + 1} ,
+                 ()=> this.intro.goToSlide(index + 1)) }}
+              style = {[styles.nextButton , {backgroundColor : index === 1 ? '#000' : themeColor}]}> 
+                <Text style = {[styles.nextText]}>{index === 3 ? "DONE" : "NEXT" }</Text>
+                {
+                  index !== 3 ? 
+                  <Icon type = {'antdesign'} color = {'#fff'} 
+                  name = {'arrowright'}  size = {14}/> : null
+                }
+                </TouchableOpacity>
+             </View>
+             </ImageBackground>
         );
       }   
     }   
@@ -122,12 +81,16 @@ export const ENTRIES1 = [
     const styles = StyleSheet.create({
       container : {
         flex : 1,
-        backgroundColor : themeColor
       },
       item: {
-        width: screenWidth - 60,
-        height: screenWidth - 60,
+        // width: screenWidth - 60,
+        // height: screenWidth - 60,
       },
+      nextText : {color : "#fff" , fontSize : height/34 , 
+      fontWeight : 'bold' , paddingBottom : 3  },
+      nextView : {height : height/10.5  ,width : "100%", position : 'absolute',
+      bottom : 0,
+      alignItems : 'flex-end' , justifyContent : "center"},
       imageContainer: {
         flex: 1,
         marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
@@ -142,5 +105,8 @@ export const ENTRIES1 = [
         ...StyleSheet.absoluteFillObject,
         resizeMode: 'cover',
       },
+      nextButton : {height : height/14 , backgroundColor : themeColor , width : 95 , flexDirection : 'row' ,
+      justifyContent : 'space-around' , alignItems : "center" , borderTopLeftRadius  : 125 ,
+       borderBottomLeftRadius : 125 , paddingHorizontal : 6}
     })
     export default withNavigation(LandingScreen)
