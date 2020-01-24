@@ -11,6 +11,7 @@ import CustomButton from '../Component/Button'
 import {themeColor, pinkColor} from '../Constant/index'
 import { Icon } from 'react-native-elements';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import AsyncStorage from '@react-native-community/async-storage';
 const slides = [
   require("../assets/1.png"),
   require("../assets/2.png"),
@@ -38,8 +39,9 @@ const width = Dimensions.get('window').width
         </View>
     );
   }
-  _onDone = () => {
-    this.setState({ showRealApp: true });
+  _onDone = async () => {
+    this.props.navigation.navigate('Home'),
+    AsyncStorage.setItem('tutorial' , 'true')
   }
     render() {
       let {index} = this.state
@@ -63,7 +65,13 @@ const width = Dimensions.get('window').width
            <View style = {styles.nextView}>
               <TouchableOpacity 
               onPress = {()=>{this.setState({index : index + 1} ,
-                 ()=> this.intro.goToSlide(index + 1)) }}
+                 ()=> {
+                   if(index === 3){
+                     this._onDone()
+                   }else{
+                     this.intro.goToSlide(index + 1)
+                   }
+                 }) }}
               style = {[styles.nextButton , {backgroundColor : index === 1 ? '#000' : themeColor}]}> 
                 <Text style = {[styles.nextText]}>{index === 3 ? "DONE" : "NEXT" }</Text>
                 {
@@ -81,10 +89,6 @@ const width = Dimensions.get('window').width
     const styles = StyleSheet.create({
       container : {
         flex : 1,
-      },
-      item: {
-        // width: screenWidth - 60,
-        // height: screenWidth - 60,
       },
       nextText : {color : "#fff" , fontSize : height/34 , 
       fontWeight : 'bold' , paddingBottom : 3  },

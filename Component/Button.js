@@ -16,5 +16,6 @@ icon={props.iconName ?
   {...props}
   containerStyle = {[{alignSelf : 'center' , width : 140  , } , props.containerStyle]}
   buttonStyle = {[{backgroundColor : props.backgroundColor ? props.backgroundColor : themeColor , 
-  height : props.height ? props.height : 50  , borderRadius : 25} ,props.buttonStyle ]}
+  height : props.height ? props.height : 50  , borderRadius : 25 } ,
+  props.buttonStyle ]}
 />

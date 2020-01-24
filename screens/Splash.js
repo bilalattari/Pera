@@ -5,6 +5,7 @@ import {
     Text,ScrollView,ImageBackground,
     Image
 } from 'react-native';
+import  AsyncStorage from '@react-native-community/async-storage'
 import {withNavigation} from 'react-navigation'
 import { Dimensions,Platform } from 'react-native';
 const logo =  require("../assets/logo.png")
@@ -17,16 +18,24 @@ const height = Dimensions.get('window').height
   static navigationOptions = {
     header: null
   }
-  _onDone = () => {
-    this.setState({ showRealApp: true });
-  }
-  componentDidMount = ()=>{
-      setTimeout(()=>this.props.navigation.navigate('Landing') , 2000)
+
+  componentDidMount = async ()=>{
+      setTimeout(async ()=>{
+        var comingFirst = await AsyncStorage.getItem('tutorial')
+        if(comingFirst !== null){
+          this.props.navigation.navigate('Home')
+        }
+        else{
+          this.props.navigation.navigate('Landing')
+        }
+      } , 3000)
   }
     render() {
         return (
           <View style={styles.container}>
               <Image source = {logo} style = {styles.image} />
+              <Image source = {require("../assets/from.png")} style = {{height : height/10 , width : height/8 , resizeMode : "contain" , 
+              position : "absolute" , bottom : 12}} />
             </View>
          );
       }   

@@ -6,19 +6,20 @@ export default CustomInput = ( props ) =>
   <Input
     containerStyle={ [ { width: '100%' ,alignSelf : 'center' , 
     marginVertical : 6 ,  }  ,props.containerStyle ]}
-    inputContainerStyle={[ {borderColor : '#323643' , backgroundColor : '#454B61' , borderRadius : 7 , 
-    paddingLeft : 12 , marginVertical : 6  , }
+    inputContainerStyle={[ { height : 45 , width : '92%' , 
+    alignSelf : 'center' , borderBottomColor : "#E5E5E5" }
       ,props.inputContainerStyle]}
     inputStyle={{ fontSize: 16  }}
     keyboardType = {props.keyboardType  ? props.keyboardType : 'default'  }
     placeholder={props.placeholder}
-    placeholderTextColor = {'#53c3f2'}
+    placeholderTextColor = {'#707070'}
     value = {props.value}
+    underlineColorAndroid = {'#fff'}
     multiline = {props.multiline}
+    rightIcon = {<Icon type = {'fontawesome'} name = {""} />}
     secureTextEntry = {props.secureTextEntry}
-    onChangeText = {(text)=> props.textChange(text)}
+    onChangeText = {(text)=> props.textChange ?  props.textChange(text) : null}
     errorStyle={{ color: 'red' }}
-    
     leftIcon={
       props.icon ? 
       <Icon
