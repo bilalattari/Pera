@@ -68,6 +68,8 @@
 		F4EF4169EC294ABC897412F3 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 35AB99B387354A1DAD0874E8 /* libRNImagePicker.a */; };
 		C00CAB0EB95745459583F06A /* libFastImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF66CA4C24F04D94A82BEDAB /* libFastImage.a */; };
 		0BC1AED9E2F84204A9659221 /* libRNNotifications.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C9B86AA45194E17BF61B15C /* libRNNotifications.a */; };
+		68A0E0E07373449892B0BE25 /* libRNPermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E6E7FDDAF8C47F5940B37A4 /* libRNPermissions.a */; };
+		F9EB23A172B9460587257CBD /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBE1A2160FB74FD6A01BAB2C /* libReactNativePermissions.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -415,6 +417,10 @@
 		FF66CA4C24F04D94A82BEDAB /* libFastImage.a */ = {isa = PBXFileReference; name = "libFastImage.a"; path = "libFastImage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		ABE325471DBB44C4B52054DC /* RNNotifications.xcodeproj */ = {isa = PBXFileReference; name = "RNNotifications.xcodeproj"; path = "../node_modules/react-native-notifications/RNNotifications/RNNotifications.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		5C9B86AA45194E17BF61B15C /* libRNNotifications.a */ = {isa = PBXFileReference; name = "libRNNotifications.a"; path = "libRNNotifications.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		94C885CCFE1847F692D35CBB /* RNPermissions.xcodeproj */ = {isa = PBXFileReference; name = "RNPermissions.xcodeproj"; path = "../node_modules/react-native-permissions/ios/RNPermissions.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		2E6E7FDDAF8C47F5940B37A4 /* libRNPermissions.a */ = {isa = PBXFileReference; name = "libRNPermissions.a"; path = "libRNPermissions.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		02FCFA0FA193481292F6EAB7 /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativePermissions.xcodeproj"; path = "../node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		CBE1A2160FB74FD6A01BAB2C /* libReactNativePermissions.a */ = {isa = PBXFileReference; name = "libReactNativePermissions.a"; path = "libReactNativePermissions.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -454,6 +460,8 @@
 				F4EF4169EC294ABC897412F3 /* libRNImagePicker.a in Frameworks */,
 				C00CAB0EB95745459583F06A /* libFastImage.a in Frameworks */,
 				0BC1AED9E2F84204A9659221 /* libRNNotifications.a in Frameworks */,
+				68A0E0E07373449892B0BE25 /* libRNPermissions.a in Frameworks */,
+				F9EB23A172B9460587257CBD /* libReactNativePermissions.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,6 +664,8 @@
 				4CE9781287044DA0AA8117A0 /* RNImagePicker.xcodeproj */,
 				92B10A14F2FF4C48899E8995 /* FastImage.xcodeproj */,
 				ABE325471DBB44C4B52054DC /* RNNotifications.xcodeproj */,
+				94C885CCFE1847F692D35CBB /* RNPermissions.xcodeproj */,
+				02FCFA0FA193481292F6EAB7 /* ReactNativePermissions.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1337,6 +1347,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1351,6 +1363,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Debug;
@@ -1385,6 +1399,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1399,6 +1415,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Release;
@@ -1432,6 +1450,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Debug;
@@ -1464,6 +1484,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Release;
@@ -1506,6 +1528,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1520,6 +1544,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Debug;
@@ -1562,6 +1588,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1576,6 +1604,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Release;
@@ -1617,6 +1647,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1631,6 +1663,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Debug;
@@ -1672,6 +1706,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1686,6 +1722,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fast-image\ios\FastImage/**",
 					"$(SRCROOT)\..\node_modules\react-native-notifications\RNNotifications",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-permissions\ios/**",
 				);
 			};
 			name = Release;

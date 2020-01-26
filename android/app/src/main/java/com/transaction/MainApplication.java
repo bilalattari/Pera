@@ -10,9 +10,7 @@ import org.pgsqlite.SQLitePluginPackage;
 import com.joshuapinter.RNUnifiedContacts.RNUnifiedContactsPackage; // <------ Add this line 
 import com.imagepicker.ImagePickerPackage;
 import com.facebook.react.ReactPackage;
-import com.wix.reactnativenotifications.RNNotificationsPackage;
-
-// import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
@@ -33,7 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
           new SQLitePluginPackage(),
           new ImagePickerPackage(),
-          // new RNNotificationsPackage(MainApplication.this),
+          new ReactNativePushNotificationPackage(),
             new VectorIconsPackage(),
             new RNGestureHandlerPackage(),
             new AsyncStoragePackage(),

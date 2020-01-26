@@ -149,9 +149,10 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-notifications')
+    // implementation project(':react-native-notifications')
     implementation project(':react-native-unified-contacts')
     implementation project(':react-native-image-picker')
+    implementation project(':react-native-push-notification')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-sqlite-storage')
     implementation project(':react-native-gesture-handler')

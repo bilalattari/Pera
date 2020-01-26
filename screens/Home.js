@@ -13,6 +13,10 @@ import SearchInput from '../Component/SearchBar'
 import  AsyncStorage from '@react-native-community/async-storage'
 import { openDatabase } from 'react-native-sqlite-storage';
 // import {Notifications} from 'react-native-notifications';
+import NotifService from '../Constant/NotificationService';
+import Modal from "react-native-modal";
+
+import appConfig from '../app.json';
 
 import moment from 'moment'
 var db = openDatabase({ name: 'Client.db' });
@@ -30,46 +34,110 @@ const width = Dimensions.get('window').width
     super(props)
     this.state = {
       allClients : [],
-      search : ''
+      search : '',
+      isVisible :false,
+      senderId: appConfig.senderID,
+      popUp : {}
     }
     this.allClient = []
+    this.notif = new NotifService(this.onRegister.bind(this), this.onNotif.bind(this));
+ 
+  }
+  onRegister(token) {
+    Alert.alert("Registered !", JSON.stringify(token));
+    console.log(token);
+    this.setState({ registerToken: token.token, gcmRegistered: true });
   }
 
+  onNotif(notif) {
+    console.log(notif);
+    Alert.alert(notif.title, notif.message);
+  }
+
+  handlePerm(perms) {
+    Alert.alert("Permissions", JSON.stringify(perms));
+  }
   componentDidMount = async()=>{
-    // Notifications.registerRemoteNotifications();
-    // console.log(Notifications)
-    // const notification = await Notifications.getInitialNotification();
-    // console.log(notification , 'notification')
-    // notification.postLocalNotification({
-    //   body: 'Local notificiation!',
-    //   title: 'Local Notification Title',
-    //   sound: 'chime.aiff',
-    //   category: 'SOME_CATEGORY',
-    //   link: 'localNotificationLink',
-    //   fireDate: new Date()
-    // }, id);
       this.props.navigation.addListener('didFocus' ,async ( )=> {
         let clients = await AsyncStorage.getItem('Clients')
         console.log(JSON.parse(clients) , 'clients')
         if(clients !== null){
-          this.allClient = JSON.parse(clients)
-          this.setState({allClients : JSON.parse(clients)})
+          let allClient = JSON.parse(clients)
+          allClient.sort((a , b)=> new Date(b.submitDate) - new Date(a.submitDate))
+          this.allClient = allClient
+          this.setInterval = setInterval(() => {
+            this.checkTime()
+          }, 60000)
+          this.setState({allClients : allClient})
         }
       })
   }
-  static navigationOptions = {
-    header: null
+  checkTime =async () =>{
+    let clients = await AsyncStorage.getItem('Clients')
+    if(clients !== null){
+      this.allClient = JSON.parse(clients)
+      JSON.parse(clients).filter((item)=> {
+        let time = item.reminderTime
+        let todaysDate = new Date(item.deliveryDate) === new Date() ? true : false
+        let getCurrentTime = `${new Date().getHours()}:${new Date().getMinutes()}`
+        if(todaysDate && time ===getCurrentTime ){
+          this.notif.localNotif()
+        }
+      })
   }
+}
+deleteClient =async ()=>{
+let {popUp , allClients} = this.state 
+allClients.splice(popUp , 1)
+this.setState({allClients : allClients , isVisible : false} , ()=>{
+AsyncStorage.setItem("Clients" , JSON.stringify(allClients))
+})
+}
+
+static navigationOptions = {
+  header: null
+}
     render() {
       let {index} = this.state
       const {navigation} = this.props
         return (
             <View style = {{flex : 1}}>
+              <Modal isVisible = {this.state.isVisible}
+                onBackButtonPress = {()=> this.setState({isVisible : false})}
+                onBackdropPress={() => this.setState({ isVisible: false })}
+                >
+                  <View style = {{height : 300 , width : '90%' , alignSelf : 'center',
+                   backgroundColor : '#fff' , borderRadius : 25}}>
+
+                     <View style = {{height : 80 , backgroundColor : themeColor , 
+                      borderBottomLeftRadius : 41, justifyContent : "center" , alignItems : "center"}}>
+                      <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 16}}>Measerment Book</Text>
+                       </View>
+                       <View style = {{flex : 1 ,justifyContent : "space-around" , alignItems : "center"}}>
+                       <Text style = {{color : themeColor , fontWeight : 'bold' , fontSize : 20 , 
+                       paddingHorizontal : "12%" , textAlign : "center" }}>You want to delete this client ?</Text>
+                       <View style = {{width : "100%" , flexDirection : "row" , justifyContent : "space-around"}}>
+                       <TouchableOpacity style = {{height : 45 , width : "40%" , backgroundColor : themeColor ,
+                        borderRadius : 25 , justifyContent : "center" , alignItems : "center"}}
+                        onPress = {()=> this.deleteClient()}
+                        >
+                      <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 16}}>Yes</Text>
+                       </TouchableOpacity>
+                       <TouchableOpacity
+                       onPress = {()=> this.setState({isVisible : false})}
+                       style = {{height : 45 , width : "40%" , backgroundColor : '#EBEBEB' ,
+                        borderRadius : 25 , justifyContent : "center" , alignItems : "center"}}>
+                      <Text style = {{color : '#000' , fontWeight : 'bold' , fontSize : 16}}>NO</Text>
+                       </TouchableOpacity>
+                         </View>
+                         </View>
+                       
+                    </View>
+                </Modal>
                 <View style = {styles.homeTopContainer}>
-                         <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 30}}>Cllents</Text>
+                         <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 30}}>Clients</Text>
                          <SearchInput
                          onChangeText = {(text)=>this.setState({search : text} , ()=>{
-                           console.log(this.state.search , 'searchhhhhhhhhhhhhh')
                            if(this.state.search.length !== 0){
                              let client = this.state.allClients
                              let filter = client.filter((data)=> data.name.indexOf(this.state.search) != -1)
@@ -90,6 +158,7 @@ const width = Dimensions.get('window').width
                     renderItem = {({item , index})=>
                     <TouchableOpacity
                     onPress = {()=> this.props.navigation.navigate('ClienDetail' , {data : item , index : index})}
+                    // onLongPress = {()=> this.setState({popUp : index , isVisible : true})}
                     style = {styles.listItem}>
                        <Image source = {{uri : item.image}} 
                        style = {{height : 55 , width : 55 , borderRadius : 125 ,
@@ -97,7 +166,7 @@ const width = Dimensions.get('window').width
                         <View style = {{flex : 1}}>
                           <View style = {{flexDirection : 'row' ,
                            justifyContent : 'space-between' , paddingRight : 12}}>
-                            <Text style = {{color : "#000"}}>Deleivery </Text>
+                            <Text style = {{color : "#000"}}>Delivery date due </Text>
                        <Text style = {{color : themeColor , fontSize : 15 ,}}>{moment(new Date(item.deliveryDate)).fromNow()}</Text>
                             </View>
                        <Text style = {{color : "#000" , fontWeight : 'bold' , fontSize : 16}}>{item.name}</Text>
@@ -107,7 +176,7 @@ const width = Dimensions.get('window').width
                     />
                     <View style = {{position : 'absolute' , top : '45%' , zIndex : -1200 , width : '100%' ,
                      justifyContent : 'center' , alignItems : 'center'}}>
-                      <Image source = {require('../assets/noclients.png')} 
+                      <Image source = {this.state.allClients.length === 0 ? require('../assets/noclients.png') : require('../assets/happy.png')} 
                       style = {{height : height/6 , width : height/6 , resizeMode : 'stretch'}} />
                       {
                         this.state.allClients.length == 0 ?

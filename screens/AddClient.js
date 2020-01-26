@@ -6,7 +6,8 @@ import {
     Image
 } from 'react-native';
 import {withNavigation} from 'react-navigation'
-import { Dimensions,Platform , TimePickerAndroid, } from 'react-native';
+import { Dimensions,Platform , TimePickerAndroid, PermissionsAndroid} from 'react-native';
+
 import {DatePicker} from 'native-base';
 import {themeColor, pinkColor} from '../Constant/index'
 import CustomInput from '../Component/Input'
@@ -24,6 +25,7 @@ import moment from 'moment'
         reminderTime : '',
         name : '',
         time : '',
+        accessContact : false,
         phoneNumber : ''
     }
     
@@ -47,6 +49,29 @@ import moment from 'moment'
         this.setState({ phoneNumber : contact.phoneNumbers[0].digits}) 
     }
     });
+  }
+  requestCameraPermission  = async()=> {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+        {
+          title: 'Measurment book neeeds accesss to your contacts',
+          message:
+            'Measurment book neeeds accesss to your contacts ' +
+            'so you can take contacts.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        this.setState({accessContact : true})
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   }
   openTimePicker = async (type)=>{
     try {
@@ -104,7 +129,11 @@ import moment from 'moment'
                       <CustomInput placeholder = {'Name'} textChange = {(text)=> this.setState({name : text})} />
                       <View >
                         <TouchableOpacity
-                        onPress = {()=> this.getContact()}
+                        onPress = {()=> {if(this.state.accessContact){
+                          this.getContact()
+                        } else{
+                          this.requestCameraPermission()
+                        }}}
                         style = {{position : "absolute" , right: '4%', bottom : 0 , height : 40, width : 40  ,zIndex : 1200}}>
                           <Image source = {require("../assets/phoneBook.png")} style = {{height : 20  , width : 20}} />
                           </TouchableOpacity>

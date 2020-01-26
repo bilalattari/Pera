@@ -43,10 +43,10 @@ const height = Dimensions.get('window').height
           userInfo.name === undefined ? 
           <ActivityIndicator size = {'large'}  /> :
             <View style = {{flex : 1}}>
-                <View style = {{width : "100%"}}>
+                <View style = {{width : "100%" , alignItems : "center" , backgroundColor : "#ccc"}}>
                     <Image  source = {{uri : userInfo.image}} 
-                    style = {{height : 250 , resizeMode : 'stretch' , 
-                    width : '100%' , backgroundColor : "#ccc"}} />
+                    style = {{height : height/2 ,  resizeMode : 'stretch' , 
+                    width : height/1.5 }} />
                     <View style = {styles.header}>
                        <TouchableOpacity 
                        onPress = {()=> this.props.navigation.navigate("Home")}
@@ -62,7 +62,7 @@ const height = Dimensions.get('window').height
                         </TouchableOpacity>
                           </View>
                           <ImageBackground source = {require('../assets/imagebg.png')}  
-                          style = {{position : 'absolute' , width : '100%' , bottom : -4 ,
+                          style = {{position : 'absolute' , width : height/1.5 , bottom : -4 ,
                           justifyContent : 'center',  height : 80 ,}}>
                           <Text style = {{color : '#000' ,textAlign : 'center' ,
                           fontWeight : 'bold' , fontSize : 21 }}>{userInfo.name}</Text>

@@ -28,6 +28,7 @@ import AsyncStorage from '@react-native-community/async-storage';
         styleName : '',
         selected: "femaleMeasurment",
         uri : '',
+        description : "",
         femaleMeasurment : {
             Height : "",
             Neck : "",
@@ -58,6 +59,7 @@ import AsyncStorage from '@react-native-community/async-storage';
             Nape_Crotch: '',
             Nape_to_Crotch_to_Neck: '',
             Shoe_Size: '',
+            
         },
         maleMeasurment : {
             Neck : '',
@@ -128,11 +130,13 @@ showImagePicker = ()=>{
   }
   onSubmit = async ()=>{
     let allClients = await AsyncStorage.getItem('Clients')
-    let {uri , styleName , selected }  = this.state
+    let {uri , styleName , selected  , description}  = this.state
     let measurment = this.state[selected]
     let userInfo = this.props.navigation.getParam("data")
     userInfo.styleName = styleName
     userInfo.image = uri
+    userInfo.submitDate = new Date()
+    userInfo.description = description
     userInfo.gender = selected === 'femaleMeasurment' ? "Female" : "Male"
     userInfo.measurment = measurment
     if(allClients !== null){
@@ -232,23 +236,28 @@ showImagePicker = ()=>{
                       <View style = {{flexDirection : "row" , flexWrap : 'wrap' , justifyContent : 'center' }}>
                       { 
                       selected === 'femaleMeasurment' ? 
-                      Object.keys(femaleMeasurment).map((name , index)=>
-                          <View key = {index} style = {styles.inputView}>
-                            <TextInput 
-                            keyboardType = {'number-pad'}
-                            style = {styles.input} 
-                            ref={(ref) => this.inputRef[name] = ref}
-                            onSubmitEditing = {()=> Object.keys(femaleMeasurment)[index + 1] ?  this.inputRef[Object.keys(femaleMeasurment)[index + 1]].focus() : null}
-                            onChangeText = {(text) => this.onChangeMeasurment('femaleMeasurment' ,name ,text  )}/>
-                            <Text style = {styles.inputText}>{name}</Text>
-                      </View>) :
+                      
+Object.keys(femaleMeasurment).map((name , index)=>
+<View key = {index} style = {styles.inputView}>
+  <TextInput 
+  keyboardType = {'number-pad'}
+  style = {styles.input} 
+  ref={(ref) => this.inputRef[name] = ref}
+  onSubmitEditing = {()=> Object.keys(femaleMeasurment)[index + 1] ?  this.inputRef[Object.keys(femaleMeasurment)[index + 1]].focus() : null}
+  onChangeText = {(text) => this.onChangeMeasurment('femaleMeasurment' ,name ,text  )}/>
+  <Text style = {styles.inputText}>{name}</Text>
+</View>)
+                        
+
+                        
+                       :
                           Object.keys(maleMeasurment).map((name , index)=>
                           <View key = {index} style = {styles.inputView}>
                             <TextInput 
                             keyboardType = {'number-pad'}
                             style = {styles.input}
                             ref={(ref) => this.inputRef[name] = ref}
-                            onSubmitEditing = {()=> this.inputRef[Object.keys(maleMeasurment)[index + 1]].focus()}
+                            onSubmitEditing = {()=> Object.keys(maleMeasurment)[index + 1] ?  this.inputRef[Object.keys(maleMeasurment)[index + 1]].focus() : null}
                             onChangeText = {(text) => this.onChangeMeasurment('maleMeasurment' ,name ,text  )}
                             />
                             <Text style = {styles.inputText}>{name}</Text>
@@ -256,6 +265,13 @@ showImagePicker = ()=>{
                           )
                       }
                           </View>
+                          <TextInput multiline = {true} 
+                        numberOfLines ={3} 
+                        underlineColorAndroid = {themeColor}
+                        placeholder ={'Note'}
+                        style = {{color : "#000" , fontSize : 16  , padding : 8 , margin : 3}}
+                        onChangeText = {(text)=> this.setState({description : text})}
+                        />
                       </View> 
                           <CustomButton title = {'SUBMIT'} 
                            onPress = {()=>this.onSubmit()}

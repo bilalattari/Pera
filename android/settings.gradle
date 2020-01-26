@@ -1,6 +1,6 @@
 rootProject.name = 'transaction'
-include ':react-native-notifications'
-project(':react-native-notifications').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-notifications/android')
+include ':react-native-push-notification'
+project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 include ':react-native-unified-contacts'
 project(':react-native-unified-contacts').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-unified-contacts/android')
 include ':react-native-image-picker'
