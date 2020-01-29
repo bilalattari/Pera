@@ -7,14 +7,22 @@ import {
 } from 'react-native';
 import {withNavigation} from 'react-navigation'
 import { Dimensions,Platform , TimePickerAndroid, PermissionsAndroid} from 'react-native';
-
 import {DatePicker} from 'native-base';
 import {themeColor, pinkColor} from '../Constant/index'
 import CustomInput from '../Component/Input'
 import CustomButton from '../Component/Button'
+import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Contacts from 'react-native-unified-contacts';
 import { Icon } from 'react-native-elements';
 import moment from 'moment'
+import Modal from "react-native-modal";
+var radio_props = [
+  {label: '30 minutes', value: 0 },
+  {label: '1 hour', value: 1 },
+  {label: '24 hour', value: 2 },
+  {label: '1 week', value: 3 },
+  {label: '2 Days', value: 4 },
+];
     const height = Dimensions.get('window').height
  class AddClient extends React.Component {
   constructor(props){
@@ -22,11 +30,12 @@ import moment from 'moment'
     this.state = {
         entryDate : '',
         deliveryDate : '',
-        reminderTime : '',
         name : '',
         time : '',
         accessContact : false,
-        phoneNumber : ''
+        phoneNumber : '',
+        reminderTime : undefined,
+        isVisible : false
     }
     
   }
@@ -95,6 +104,9 @@ import moment from 'moment'
     console.log(this.state  , 'this state')
     let {name , phoneNumber , entryDate , deliveryDate , time , reminderTime} = this.state
     if(name !== '' && phoneNumber !== '' && entryDate !== '' && deliveryDate !== '' && time !== '' && reminderTime !== ''){
+
+      let data = this.state
+      data.reminderTime = radio_props[data.reminderTime].label
       this.props.navigation.navigate('Measurment' , {data : this.state})
     }else{
       alert("Please fill all the fields")
@@ -103,8 +115,60 @@ import moment from 'moment'
     render() {
       let {index , state , time} = this.state
       const {navigation} = this.props
+      
         return (
             <ScrollView style = {{flex : 1 , backgroundColor : '#F1F0F2'}}>
+              <Modal isVisible = {this.state.isVisible}
+                onBackButtonPress = {()=> this.setState({isVisible : false})}
+                onBackdropPress={() => this.setState({ isVisible: false })}
+                >
+                   <View style = {{height : 350 , width : '95%' , alignSelf : 'center',
+                   backgroundColor : '#fff' , borderRadius : 25}}>
+                     <View style = {{height : 60 , backgroundColor : themeColor , 
+                      borderBottomLeftRadius : 41, justifyContent : "center" , alignItems : "center"}}>
+                      <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 16}}>
+                        Reminder</Text>
+                       </View>
+                  <RadioForm
+  animation={true}
+>
+  {
+    radio_props.map((obj, i) => (
+      <RadioButton labelHorizontal={true} key={i} 
+      style = {{height : 35 , alignItems : 'center' , margin : 5}}  >
+        {/*  You can set RadioButtonLabel before RadioButtonInput */}
+        <RadioButtonInput
+          obj={obj}
+          index={i}
+          isSelected={this.state.reminderTime === i}
+          onPress={()=> this.setState({reminderTime : i })}
+          borderWidth={1}
+          buttonInnerColor={themeColor}
+          buttonOuterColor={themeColor}
+          buttonSize={15}
+          buttonOuterSize={20}
+          buttonWrapStyle={{marginLeft: 10}}
+        />
+        <RadioButtonLabel
+          obj={obj}
+          index={i}
+          labelHorizontal={true}
+          onPress={()=> this.setState({reminderTime : i })}
+          labelStyle={{fontSize: 20, color: themeColor , marginTop : 5 }}
+          labelWrapStyle={{height : 50}}
+        />
+      </RadioButton>
+    ))
+  }  
+</RadioForm>
+<TouchableOpacity
+                       onPress = {()=> this.setState({isVisible : false})}
+                       style = {{height : 45 , width : "80%" , backgroundColor : themeColor , alignSelf : 'center',
+                        borderRadius : 25 , justifyContent : "center" , alignItems : "center" , marginTop : 8}}>
+                      <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 16}}>Ok</Text>
+                       </TouchableOpacity>
+                   </View>
+                </Modal>
                 <View style = {styles.topHeader}>
                     <View style = {{height : 60 , flexDirection : 'row'}}>
                         <TouchableOpacity 
@@ -185,10 +249,10 @@ import moment from 'moment'
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity
-            onPress = {()=> this.openTimePicker('reminder')}
+            onPress = {()=> this.setState({isVisible : true})}
             style = {[styles.datePicker , {justifyContent : "flex-end" }]}>
                 <Text style = {{fontSize : 17 , paddingBottom: 6, marginLeft: 5,}}>
-                {this.state.reminderTime !== '' ? this.state.reminderTime : "Reminder Time" }
+                {this.state.reminderTime !== undefined ? radio_props[this.state.reminderTime].label  : "Set Reminder" }
                 </Text>
             </TouchableOpacity>
                       </View> 
@@ -204,6 +268,8 @@ import moment from 'moment'
       container : {
         flex : 1,
       },
+      modelTimeButton : {paddingLeft : 25 ,height : 41 ,margin : 2, 
+        justifyContent : "center" , borderBottomColor : themeColor , borderBottomWidth : 0.5},
       datePicker : {height : 45 , borderBottomColor : '#E5E5E5' , borderBottomWidth : 1 , width : '86%' ,
       alignSelf  : 'center' , marginVertical : 6},
       topHeader : {height : 160 , backgroundColor : themeColor ,

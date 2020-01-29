@@ -11,14 +11,11 @@ import CustomButton from '../Component/Button'
 import {themeColor, pinkColor} from '../Constant/index'
 import SearchInput from '../Component/SearchBar'
 import  AsyncStorage from '@react-native-community/async-storage'
-import { openDatabase } from 'react-native-sqlite-storage';
-// import {Notifications} from 'react-native-notifications';
 import NotifService from '../Constant/NotificationService';
 import Modal from "react-native-modal";
-
 import appConfig from '../app.json';
-
 import moment from 'moment'
+import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'Client.db' });
 import { Icon } from 'react-native-elements';
 const slides = [
@@ -57,8 +54,55 @@ const width = Dimensions.get('window').width
   handlePerm(perms) {
     Alert.alert("Permissions", JSON.stringify(perms));
   }
+
+  openTestDatabase = async () => {
+    this.loading = true
+    try {
+        db.transaction(function(txn) {
+            txn.executeSql(
+              "SELECT name FROM sqlite_master WHERE type='table' AND name='table_client'",
+              [],
+              function(tx, res) {
+                console.log(res.rows.length , 'measurment_data db created')
+                if (res.rows.length == 0) {
+                  txn.executeSql(
+                    'CREATE TABLE IF NOT EXISTS table_client(client_id INTEGER PRIMARY KEY AUTOINCREMENT, client_data VARCHAR(30))',
+                    []
+                  );
+                }
+              }
+            );
+          }) 
+        } 
+          catch (e) {
+          this.loading = false
+        }
+}
+getAllClients = async () => {
+  this.loading = true
+  try {
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM table_client', [], (tx, results) => {
+        var temp = [];
+        for (let i = 0; i < results.rows.length; ++i) {
+          let item = JSON.parse(results.rows.item(i).client_data)
+          item.id = results.rows.item(i).client_id
+          temp.push(item);
+        }
+        temp.sort((a , b)=> new Date(b.submitDate) - new Date(a.submitDate))
+        this.setState({allClients  :temp})
+      })
+    }) 
+      } 
+        catch (e) {
+        this.loading = false
+      }
+}
+
   componentDidMount = async()=>{
+    this.openTestDatabase()
       this.props.navigation.addListener('didFocus' ,async ( )=> {
+        this.getAllClients()
         let clients = await AsyncStorage.getItem('Clients')
         console.log(JSON.parse(clients) , 'clients')
         if(clients !== null){
@@ -87,11 +131,16 @@ const width = Dimensions.get('window').width
   }
 }
 deleteClient =async ()=>{
-let {popUp , allClients} = this.state 
-allClients.splice(popUp , 1)
-this.setState({allClients : allClients , isVisible : false} , ()=>{
-AsyncStorage.setItem("Clients" , JSON.stringify(allClients))
-})
+let {popUp } = this.state 
+db.transaction(tx => {
+  tx.executeSql(
+    'DELETE FROM  table_client where client_id=?',
+    [popUp],
+    (tx, results) => {
+      console.log('Results', results.rowsAffected);
+      this.setState({isVisible : false} ,()=> this.getAllClients())
+    })
+  })
 }
 
 static navigationOptions = {
@@ -158,10 +207,10 @@ static navigationOptions = {
                     renderItem = {({item , index})=>
                     <TouchableOpacity
                     onPress = {()=> this.props.navigation.navigate('ClienDetail' , {data : item , index : index})}
-                    // onLongPress = {()=> this.setState({popUp : index , isVisible : true})}
+                    onLongPress = {()=> this.setState({popUp : item.id , isVisible : true})}
                     style = {styles.listItem}>
-                       <Image source = {{uri : item.image}} 
-                       style = {{height : 55 , width : 55 , borderRadius : 125 ,
+                       <Image source = {item.image === '' ? require('../assets/avatar.jpg') : {uri : `data:image/png;base64, ${item.image}` }} 
+                       style = {{height : 55 , width : 55 , borderRadius : 125 , 
                         marginHorizontal : 16 , borderColor : themeColor , borderWidth : 1.5 }} />
                         <View style = {{flex : 1}}>
                           <View style = {{flexDirection : 'row' ,

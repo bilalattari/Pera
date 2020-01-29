@@ -10,12 +10,7 @@ import moment from 'moment'
 import {withNavigation} from 'react-navigation'
 import { Dimensions,Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
-const slides = [
-  require("../assets/1.png"),
-  require("../assets/2.png"),
-  require("../assets/4.png"),
-  require("../assets/3.png"),
-];
+import call from 'react-native-phone-call'
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
  class ClienDetail extends React.Component {
@@ -44,8 +39,8 @@ const height = Dimensions.get('window').height
           <ActivityIndicator size = {'large'}  /> :
             <View style = {{flex : 1}}>
                 <View style = {{width : "100%" , alignItems : "center" , backgroundColor : "#ccc"}}>
-                    <Image  source = {{uri : userInfo.image}} 
-                    style = {{height : height/2 ,  resizeMode : 'stretch' , 
+                    <Image  source = {userInfo.image === '' ? require('../assets/avatar.jpg') : {uri : `data:image/png;base64, ${userInfo.image}`}}
+                    style = {{height : height/2 ,  resizeMode : 'contain' , 
                     width : height/1.5 }} />
                     <View style = {styles.header}>
                        <TouchableOpacity 
@@ -69,10 +64,18 @@ const height = Dimensions.get('window').height
                           </ImageBackground> 
                     </View>
                     <View style = {{marginTop : -12}}>
-                           <TouchableOpacity style = {styles.callButton}>
+                           <TouchableOpacity 
+                           onPress = {()=>{
+                            const args = {
+                              number: userInfo.phoneNumber, // String value with the number to call
+                              prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call 
+                            }
+                            call(args).catch(console.error)
+                           }}
+                           style = {styles.callButton}>
                                  <Icon type = {'ionicon'} name = {'ios-call'} color = {'red'} 
                                  containerStyle = {{marginRight : 12}} size = {20} />
-    <Text style = {styles.callNumber}>{userInfo.phoneNumber}</Text>
+                              <Text style = {styles.callNumber}>{userInfo.phoneNumber}</Text>
                                </TouchableOpacity>
                            </View>
                              <ScrollView>
@@ -80,13 +83,13 @@ const height = Dimensions.get('window').height
                                    <View style = {styles.dateView}>
                                        <Image source = {require('../assets/calendar2.png')} 
                                        style = {styles.image} />
-    <Text style = {styles.date}>{moment(new Date(userInfo.entryDate)).format("DD-MM-YYYY")}</Text>
+                                       <Text style = {styles.date}>{moment(new Date(userInfo.entryDate)).format("DD-MM-YYYY")}</Text>
                                        <Text style = {styles.dateText}>Entry Date</Text>
                                        </View>
                                        <View style = {[styles.dateView , {backgroundColor : '#ED0C14'}]}>
                                        <Image source = {require('../assets/calendar2.png')} 
                                        style = {styles.image} />
-    <Text style = {styles.date}>{moment(new Date(userInfo.deliveryDate)).format("DD-MM-YYYY")}</Text>
+                                      <Text style = {styles.date}>{moment(new Date(userInfo.deliveryDate)).format("DD-MM-YYYY")}</Text>
                                        <Text style = {styles.dateText}>Delivery Date</Text>
                                        </View>
                                        <View style = {styles.dateView}>
@@ -98,7 +101,7 @@ const height = Dimensions.get('window').height
                                    </View>  
                       <View style = {styles.textStyle}>  
                        <Text style = {styles.style}>Style : </Text>
-        <Text style = {{color : '#000' , fontWeight : 'bold' , fontSize : 18}}>{userInfo.styleName}</Text>
+                        <Text style = {{color : '#000' , fontWeight : 'bold' , fontSize : 18}}>{userInfo.styleName}</Text>
                          </View>
                          <View style = {{flexDirection : "row" , flexWrap : 'wrap' , justifyContent : 'center' }}>
                          {

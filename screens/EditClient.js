@@ -10,10 +10,11 @@ import { Dimensions,Platform } from 'react-native';
 import CustomButton from '../Component/Button'
 import {themeColor, pinkColor} from '../Constant/index'
 import ImagePicker from 'react-native-image-picker';
-
 import {DatePicker} from 'native-base';
 import { Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
+import { openDatabase } from 'react-native-sqlite-storage';
+var db = openDatabase({ name: 'Client.db' });
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
  class EditClient extends React.Component {
@@ -46,7 +47,7 @@ const height = Dimensions.get('window').height
         console.log('User tapped custom button: ', response.customButton);
       } else {
         let user = this.state.userInfo
-        user.image = response.uri
+        user.image = response.data
         this.setState({userInfo : user})
       }
     });
@@ -58,12 +59,17 @@ const height = Dimensions.get('window').height
     })
   }
   saveUpdates = async()=>{
-    let {userInfo , index} = this.state
-    let allClients = await AsyncStorage.getItem('Clients')
-    let val = JSON.parse(allClients)
-    val[index] = userInfo
-    await AsyncStorage.setItem('Clients' , JSON.stringify(val))
-    this.props.navigation.navigate('Home')
+    let {userInfo} = this.state
+    let data = JSON.stringify(userInfo)
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE table_client set client_data=? where client_id=?',
+        [data , userInfo.id],
+        (tx, resultUpdate) => {
+          console.log(resultUpdate , 'result update')
+          this.props.navigation.navigate('Home')
+        })
+      })
   }
     render() {
       let {userInfo} = this.state
@@ -74,10 +80,11 @@ const height = Dimensions.get('window').height
             <View style = {{flex : 1}}>
                 <View style = {{minHeight : 210 , backgroundColor : themeColor ,}}>
                 <View style = {{width : "100%"}}>
-                  <TouchableOpacity  onPress = {()=> this.showImagePicker()}>
-                    <Image  source = {{uri : userInfo.image}} 
-                    style = {{height : 210 , resizeMode : 'stretch' , 
-                    width : '100%' , borderBottomLeftRadius : 63}} />
+                  <TouchableOpacity  
+                  onPress = {()=> this.showImagePicker()}>
+                    <Image  source = {userInfo.image === '' ? require('../assets/avatar.jpg') : {uri : `data:image/png;base64, ${userInfo.image}`}} 
+                    style = {{height : 210 , resizeMode : 'contain' , 
+                    width : '100%'}} />
                     </TouchableOpacity>
                     <View style = {styles.header}>
                        <TouchableOpacity style = {styles.leftArrowView}
@@ -100,7 +107,6 @@ const height = Dimensions.get('window').height
                     value = {userInfo.name}
                     onChangeText = {(text)=>{
                       let user = userInfo
-                      console.log(user , 'user info name')
                       user.name = text
                       this.setState({userInfo : user})
                     }}

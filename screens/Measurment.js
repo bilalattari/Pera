@@ -10,14 +10,14 @@ import { Dimensions,Platform , TimePickerAndroid, TextInput} from 'react-native'
 import {DatePicker , Picker} from 'native-base';
 import {themeColor, pinkColor} from '../Constant/index'
 import ImagePicker from 'react-native-image-picker';
-import { openDatabase } from 'react-native-sqlite-storage';
 import CustomInput from '../Component/Input'
 import CustomButton from '../Component/Button'
 import Modal from "react-native-modal";
 import { Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
-
-  const height = Dimensions.get('window').height
+import { openDatabase } from 'react-native-sqlite-storage';
+var db = openDatabase({ name: 'Client.db' });
+const height = Dimensions.get('window').height
  class Measurment extends React.Component {
   constructor(props){
     super(props)
@@ -113,7 +113,7 @@ showImagePicker = ()=>{
       console.log('User tapped custom button: ', response.customButton);
     } else {
       const source = { uri: response.uri };
-      this.setState({uri : response.uri})
+      this.setState({uri : response.data})
     }
   });
 }
@@ -129,7 +129,6 @@ showImagePicker = ()=>{
     this.setState({ chosenDate: newDate });
   }
   onSubmit = async ()=>{
-    let allClients = await AsyncStorage.getItem('Clients')
     let {uri , styleName , selected  , description}  = this.state
     let measurment = this.state[selected]
     let userInfo = this.props.navigation.getParam("data")
@@ -139,19 +138,17 @@ showImagePicker = ()=>{
     userInfo.description = description
     userInfo.gender = selected === 'femaleMeasurment' ? "Female" : "Male"
     userInfo.measurment = measurment
-    if(allClients !== null){
-      let clients =  JSON.parse(allClients)
-      clients.push(userInfo)
-      await AsyncStorage.setItem('Clients' ,JSON.stringify(clients)  )
-      this.props.navigation.navigate('Home')
-    }
-    else{
-      let clients =  []
-      clients.push(userInfo)
-      console.log(clients , 'clients')
-      await AsyncStorage.setItem('Clients' ,JSON.stringify(clients) )
-      this.props.navigation.navigate('Home')
-    }
+    let data = JSON.stringify(userInfo)
+    console.log(data , 'datadatadata')
+    db.transaction(tx => {
+          tx.executeSql(
+                    'INSERT INTO table_client(client_data) VALUES (?)',
+                    [data],
+                    (tx, results ,) => {
+                      console.log(results , 'results')
+                      this.props.navigation.navigate('Home')
+                      })
+      })
   }
 
     render() {
@@ -191,9 +188,9 @@ showImagePicker = ()=>{
                     {
                       uri !== '' ?
                     <TouchableOpacity onPress = {this.showImagePicker}>
-                      <Image source = {{uri : uri}} 
+                      <Image source = {{uri : `data:image/png;base64, ${uri}`}} 
                       style = {{height : height/3.5 , backgroundColor : "#000" , 
-                      justifyContent : 'center' , alignItems : "center"}} />
+                      justifyContent : 'center' , alignItems : "center" , resizeMode : 'contain'}} />
                       </TouchableOpacity>
                        : 
                       <View style = {{height : height/3.5 , backgroundColor : "#EBEBEB" , 
