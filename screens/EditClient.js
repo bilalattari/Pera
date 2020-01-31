@@ -11,8 +11,8 @@ import CustomButton from '../Component/Button'
 import {themeColor, pinkColor} from '../Constant/index'
 import ImagePicker from 'react-native-image-picker';
 import {DatePicker} from 'native-base';
+import moment from 'moment'
 import { Icon } from 'react-native-elements';
-import AsyncStorage from '@react-native-community/async-storage';
 import { openDatabase } from 'react-native-sqlite-storage';
 var db = openDatabase({ name: 'Client.db' });
 const width = Dimensions.get('window').width
@@ -82,7 +82,7 @@ const height = Dimensions.get('window').height
                 <View style = {{width : "100%"}}>
                   <TouchableOpacity  
                   onPress = {()=> this.showImagePicker()}>
-                    <Image  source = {userInfo.image === '' ? require('../assets/avatar.jpg') : {uri : `data:image/png;base64, ${userInfo.image}`}} 
+                    <Image  source = {userInfo.image === '' ? require('../assets/avatar.png') : {uri : `data:image/png;base64, ${userInfo.image}`}} 
                     style = {{height : 210 , resizeMode : 'contain' , 
                     width : '100%'}} />
                     </TouchableOpacity>
@@ -113,6 +113,18 @@ const height = Dimensions.get('window').height
                     placeholderTextColor = {'#ccc'} 
                      style = {styles.input} />
                 </View>
+                <View style = {styles.inputView}>
+                    <Text style = {styles.inputText}>Note :</Text>
+                    <TextInput placeholder = {'Note'}
+                    value = {userInfo.description}
+                    onChangeText = {(text)=>{
+                      let user = userInfo
+                      user.description = text
+                      this.setState({userInfo : user})
+                    }}
+                    placeholderTextColor = {'#ccc'} 
+                     style = {styles.input} />
+                </View>
 
                 <View style = {styles.inputView}>
                     <Text style = {styles.inputText}>Phone Number :</Text>
@@ -132,15 +144,15 @@ const height = Dimensions.get('window').height
                     <View style = {styles.input}>
                       <DatePicker
             defaultDate={new Date(userInfo.entryDate)}
-            minimumDate={new Date(2020 ,0 , 1 )}
+            minimumDate={new Date()}
             locale={"en"}
             timeZoneOffsetInMinutes={undefined}
             modalTransparent={false}
             animationType={"fade"}
             androidMode={"default"}
-            placeHolderText={new Date(userInfo.entryDate).toLocaleDateString() }
+            placeHolderText={moment(new Date(userInfo.entryDate)).format("DD-MM-YYYY")}
             textStyle={{ height : 45 ,
-                width : 180 , }}
+                width : 180 , color : '#fff' }}
             placeHolderTextStyle={{ color: "#fff" , fontSize : 16, marginLeft : -5 }}
             onDateChange={(date)=>{
               let user = userInfo
@@ -162,9 +174,9 @@ const height = Dimensions.get('window').height
             modalTransparent={false}
             animationType={"fade"}
             androidMode={"default"}
-            placeHolderText={new Date(userInfo.deliveryDate).toLocaleDateString()}
+            placeHolderText={moment(new Date(userInfo.deliveryDate)).format("DD-MM-YYYY")}
             textStyle={{ height : 45 ,
-                width : 180 , }}
+                width : 180 ,  color : '#fff'}}
             placeHolderTextStyle={{ color: "#fff" , fontSize : 16, marginLeft : -5 }}
             onDateChange={(date)=>{
               let user = userInfo

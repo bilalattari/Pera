@@ -11,6 +11,7 @@ import {withNavigation} from 'react-navigation'
 import { Dimensions,Platform } from 'react-native';
 import { Icon } from 'react-native-elements';
 import call from 'react-native-phone-call'
+import { themeColor } from '../Constant';
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
  class ClienDetail extends React.Component {
@@ -38,8 +39,8 @@ const height = Dimensions.get('window').height
           userInfo.name === undefined ? 
           <ActivityIndicator size = {'large'}  /> :
             <View style = {{flex : 1}}>
-                <View style = {{width : "100%" , alignItems : "center" , backgroundColor : "#ccc"}}>
-                    <Image  source = {userInfo.image === '' ? require('../assets/avatar.jpg') : {uri : `data:image/png;base64, ${userInfo.image}`}}
+                <View style = {{width : "100%" , alignItems : "center" , backgroundColor : themeColor}}>
+                    <Image  source = {userInfo.image === '' ? require('../assets/avatar.png') : {uri : `data:image/png;base64, ${userInfo.image}`}}
                     style = {{height : height/2 ,  resizeMode : 'contain' , 
                     width : height/1.5 }} />
                     <View style = {styles.header}>
@@ -102,6 +103,10 @@ const height = Dimensions.get('window').height
                       <View style = {styles.textStyle}>  
                        <Text style = {styles.style}>Style : </Text>
                         <Text style = {{color : '#000' , fontWeight : 'bold' , fontSize : 18}}>{userInfo.styleName}</Text>
+                         </View>
+                         <View style = {styles.textStyle}>  
+                       <Text style = {styles.style}>Note : </Text>
+                        <Text style = {{color : '#000' , fontWeight : 'bold' , fontSize : 18}}>{userInfo.description}</Text>
                          </View>
                          <View style = {{flexDirection : "row" , flexWrap : 'wrap' , justifyContent : 'center' }}>
                          {

@@ -86,11 +86,23 @@ getAllClients = async () => {
         var temp = [];
         for (let i = 0; i < results.rows.length; ++i) {
           let item = JSON.parse(results.rows.item(i).client_data)
+          let submiteDateYear = new Date(item.deliveryDate).getFullYear()
+          let submiteDateMonth = new Date(item.deliveryDate).getMonth()
+          submiteDateMonth = submiteDateMonth + 1 < 10 ?  '0' +(submiteDateMonth + 1) : submiteDateMonth
+          let submiteDateDay = new Date(item.deliveryDate).getDate()
+          submiteDateDay = submiteDateDay  < 10 ?  '0' +(submiteDateDay) : submiteDateDay
+          let submiteDateHour = `${item.time}`.substring(0, 2)
+          let submiteDateMinute =`${item.time}`.substring(3, 5)
+          let submitMilliSecond = moment(`${submiteDateYear}-${submiteDateMonth}-${submiteDateDay} ${submiteDateHour}:${submiteDateMinute}`).fromNow()
+          let diff = new Date(`${submiteDateYear}-${submiteDateMonth}-${submiteDateDay} ${submiteDateHour}:${submiteDateMinute}`) - new Date() 
           item.id = results.rows.item(i).client_id
+          item.diff = diff
+          item.deliveryQoute =submitMilliSecond
           temp.push(item);
         }
         temp.sort((a , b)=> new Date(b.submitDate) - new Date(a.submitDate))
-        this.setState({allClients  :temp})
+        this.allClient = temp
+        this.setState({allClients  :temp} , ()=> this.checkTime())
       })
     }) 
       } 
@@ -102,34 +114,78 @@ getAllClients = async () => {
   componentDidMount = async()=>{
     this.openTestDatabase()
       this.props.navigation.addListener('didFocus' ,async ( )=> {
-        this.getAllClients()
-        let clients = await AsyncStorage.getItem('Clients')
-        console.log(JSON.parse(clients) , 'clients')
-        if(clients !== null){
-          let allClient = JSON.parse(clients)
-          allClient.sort((a , b)=> new Date(b.submitDate) - new Date(a.submitDate))
-          this.allClient = allClient
-          this.setInterval = setInterval(() => {
-            this.checkTime()
-          }, 60000)
-          this.setState({allClients : allClient})
-        }
+        this.getAllClients()  
+        })
+  }
+
+  updateUserInfo = (data)=>{
+    db.transaction(tx => {
+      tx.executeSql(
+        'UPDATE table_client set client_data=? where client_id=?',
+        [JSON.stringify(data) , data.id],
+        (tx, resultUpdate) => {
+          this.getAllClients()
+        })
       })
   }
   checkTime =async () =>{
-    let clients = await AsyncStorage.getItem('Clients')
-    if(clients !== null){
-      this.allClient = JSON.parse(clients)
-      JSON.parse(clients).filter((item)=> {
-        let time = item.reminderTime
-        let todaysDate = new Date(item.deliveryDate) === new Date() ? true : false
-        let getCurrentTime = `${new Date().getHours()}:${new Date().getMinutes()}`
-        if(todaysDate && time ===getCurrentTime ){
-          this.notif.localNotif()
-        }
-      })
+    let halfHOur = 1000 * 60 * 30
+    let anHOur = 1000 * 60 * 60
+    let oneDay = 1000 * 60 * 60 *24
+    let twoDay = 1000 * 60 * 60 * 24 * 2
+    let oneWeek = 1000 * 60 * 60 * 24 * 7
+    this.state.allClients.map((data)=>{
+      if(data.reminderTime === '30 minutes' && !data.reminderTimeNotif){
+       let check = data.diff - halfHOur
+       console.log(check , 'checkcheck 30 minutes')
+       if(check > 0){
+         console.log('check')
+         this.notif.scheduleNotif('half an hour' , data.name , check)
+         data.reminderTimeNotif = true
+         this.updateUserInfo(data)
+       }
+      }
+      if(data.reminderTime === '24 hour' && !data.reminderTimeNotif ){
+       let check = data.diff - oneDay
+       console.log(check , 'checkcheck 1 day')
+       if(check > 0){
+         console.log('check')
+         this.notif.scheduleNotif('24 hours' , data.name , check)
+         data.reminderTimeNotif = true
+         this.updateUserInfo(data)
+       }
+     }
+     if(data.reminderTime === '1 hour' && !data.reminderTimeNotif ){
+      let check = data.diff - anHOur
+      console.log(check , 'checkcheck 1 hour')
+      if(check > 0){
+        console.log('check')
+        this.notif.scheduleNotif('1 hour' , data.name , check)
+        data.reminderTimeNotif = true
+        this.updateUserInfo(data)
+      }
+     }
+     if(data.reminderTime === '1 week' && !data.reminderTimeNotif ){
+      let check = data.diff - oneWeek
+      console.log(check , 'checkcheck 1 week')
+      if(check > 0){
+        console.log('check')
+        this.notif.scheduleNotif('One week' , data.name , check)
+        data.reminderTimeNotif = true
+        this.updateUserInfo(data)
+      }
+     }
+     if(data.reminderTime === '2 Days' && !data.reminderTimeNotif ){
+      let check = data.diff - twoDay
+      console.log(data.diff , 'checkcheck 2 days')
+      if(check > 0){
+        this.notif.scheduleNotif('Two week' , data.name , check)
+        data.reminderTimeNotif = true
+        this.updateUserInfo(data)
+      }
+    }
+    })
   }
-}
 deleteClient =async ()=>{
 let {popUp } = this.state 
 db.transaction(tx => {
@@ -137,8 +193,9 @@ db.transaction(tx => {
     'DELETE FROM  table_client where client_id=?',
     [popUp],
     (tx, results) => {
+      this.setState({isVisible : false})
+      this.getAllClients()
       console.log('Results', results.rowsAffected);
-      this.setState({isVisible : false} ,()=> this.getAllClients())
     })
   })
 }
@@ -209,14 +266,14 @@ static navigationOptions = {
                     onPress = {()=> this.props.navigation.navigate('ClienDetail' , {data : item , index : index})}
                     onLongPress = {()=> this.setState({popUp : item.id , isVisible : true})}
                     style = {styles.listItem}>
-                       <Image source = {item.image === '' ? require('../assets/avatar.jpg') : {uri : `data:image/png;base64, ${item.image}` }} 
-                       style = {{height : 55 , width : 55 , borderRadius : 125 , 
+                       <Image source = {item.image === '' ? require('../assets/avatar.png') : {uri : `data:image/png;base64, ${item.image}` }} 
+                       style = {{height : 55 , width : 55 , borderRadius : 125 , resizeMode : "cover",                  
                         marginHorizontal : 16 , borderColor : themeColor , borderWidth : 1.5 }} />
                         <View style = {{flex : 1}}>
                           <View style = {{flexDirection : 'row' ,
                            justifyContent : 'space-between' , paddingRight : 12}}>
                             <Text style = {{color : "#000"}}>Delivery date due </Text>
-                       <Text style = {{color : themeColor , fontSize : 15 ,}}>{moment(new Date(item.deliveryDate)).fromNow()}</Text>
+                       <Text style = {{color : themeColor , fontSize : 15 ,}}>{item.deliveryQoute}</Text>
                             </View>
                        <Text style = {{color : "#000" , fontWeight : 'bold' , fontSize : 16}}>{item.name}</Text>
                           </View>
