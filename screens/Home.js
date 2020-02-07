@@ -32,6 +32,7 @@ const width = Dimensions.get('window').width
     this.state = {
       allClients : [],
       search : '',
+      isVisibleDelete : false,
       isVisible :false,
       senderId: appConfig.senderID,
       popUp : {}
@@ -41,14 +42,12 @@ const width = Dimensions.get('window').width
  
   }
   onRegister(token) {
-    Alert.alert("Registered !", JSON.stringify(token));
     console.log(token);
     this.setState({ registerToken: token.token, gcmRegistered: true });
   }
 
   onNotif(notif) {
     console.log(notif);
-    Alert.alert(notif.title, notif.message);
   }
 
   handlePerm(perms) {
@@ -80,6 +79,7 @@ const width = Dimensions.get('window').width
 }
 getAllClients = async () => {
   this.loading = true
+  openDatabase({ name: 'Client.db' });
   try {
     db.transaction(tx => {
       tx.executeSql('SELECT * FROM table_client', [], (tx, results) => {
@@ -90,11 +90,10 @@ getAllClients = async () => {
           let submiteDateMonth = new Date(item.deliveryDate).getMonth()
           submiteDateMonth = submiteDateMonth + 1 < 10 ?  '0' +(submiteDateMonth + 1) : submiteDateMonth
           let submiteDateDay = new Date(item.deliveryDate).getDate()
-          submiteDateDay = submiteDateDay  < 10 ?  '0' +(submiteDateDay) : submiteDateDay
-          let submiteDateHour = `${item.time}`.substring(0, 2)
           let submiteDateMinute =`${item.time}`.substring(3, 5)
-          let submitMilliSecond = moment(`${submiteDateYear}-${submiteDateMonth}-${submiteDateDay} ${submiteDateHour}:${submiteDateMinute}`).fromNow()
-          let diff = new Date(`${submiteDateYear}-${submiteDateMonth}-${submiteDateDay} ${submiteDateHour}:${submiteDateMinute}`) - new Date() 
+          let submiteDateHour = `${item.time}`.substring(0, 2)
+          let submitMilliSecond = moment(`${submiteDateYear}-${submiteDateMonth}-${submiteDateDay} ${submiteDateHour}:${submiteDateMinute}` , "YYYY-MM-DD HH:mm").fromNow()
+          let diff = moment(`${submiteDateYear}-${submiteDateMonth}-${submiteDateDay} ${submiteDateHour}:${submiteDateMinute}` , "YYYY-MM-DD HH:mm").valueOf() - moment().valueOf() 
           item.id = results.rows.item(i).client_id
           item.diff = diff
           item.deliveryQoute =submitMilliSecond
@@ -113,18 +112,26 @@ getAllClients = async () => {
 
   componentDidMount = async()=>{
     this.openTestDatabase()
+    this.checkTimeRegularly()
       this.props.navigation.addListener('didFocus' ,async ( )=> {
         this.getAllClients()  
         })
   }
-
+checkTimeRegularly = ()=>{
+  this.intervel = setInterval(()=> {this.getAllClients()} , 60000)
+}
+  componentWillUnmount(){
+    this.intervel = clearInterval()
+  }
   updateUserInfo = (data)=>{
+    openDatabase({ name: 'Client.db' });
     db.transaction(tx => {
       tx.executeSql(
         'UPDATE table_client set client_data=? where client_id=?',
         [JSON.stringify(data) , data.id],
         (tx, resultUpdate) => {
           this.getAllClients()
+          db.close()
         })
       })
   }
@@ -136,20 +143,16 @@ getAllClients = async () => {
     let oneWeek = 1000 * 60 * 60 * 24 * 7
     this.state.allClients.map((data)=>{
       if(data.reminderTime === '30 minutes' && !data.reminderTimeNotif){
-       let check = data.diff - halfHOur
-       console.log(check , 'checkcheck 30 minutes')
+        let check = data.diff - halfHOur
        if(check > 0){
-         console.log('check')
          this.notif.scheduleNotif('half an hour' , data.name , check)
          data.reminderTimeNotif = true
          this.updateUserInfo(data)
        }
       }
       if(data.reminderTime === '24 hour' && !data.reminderTimeNotif ){
-       let check = data.diff - oneDay
-       console.log(check , 'checkcheck 1 day')
+        let check = data.diff - oneDay
        if(check > 0){
-         console.log('check')
          this.notif.scheduleNotif('24 hours' , data.name , check)
          data.reminderTimeNotif = true
          this.updateUserInfo(data)
@@ -157,9 +160,7 @@ getAllClients = async () => {
      }
      if(data.reminderTime === '1 hour' && !data.reminderTimeNotif ){
       let check = data.diff - anHOur
-      console.log(check , 'checkcheck 1 hour')
       if(check > 0){
-        console.log('check')
         this.notif.scheduleNotif('1 hour' , data.name , check)
         data.reminderTimeNotif = true
         this.updateUserInfo(data)
@@ -167,9 +168,7 @@ getAllClients = async () => {
      }
      if(data.reminderTime === '1 week' && !data.reminderTimeNotif ){
       let check = data.diff - oneWeek
-      console.log(check , 'checkcheck 1 week')
       if(check > 0){
-        console.log('check')
         this.notif.scheduleNotif('One week' , data.name , check)
         data.reminderTimeNotif = true
         this.updateUserInfo(data)
@@ -177,7 +176,6 @@ getAllClients = async () => {
      }
      if(data.reminderTime === '2 Days' && !data.reminderTimeNotif ){
       let check = data.diff - twoDay
-      console.log(data.diff , 'checkcheck 2 days')
       if(check > 0){
         this.notif.scheduleNotif('Two week' , data.name , check)
         data.reminderTimeNotif = true
@@ -188,13 +186,15 @@ getAllClients = async () => {
   }
 deleteClient =async ()=>{
 let {popUp } = this.state 
+openDatabase({ name: 'Client.db' });
 db.transaction(tx => {
   tx.executeSql(
     'DELETE FROM  table_client where client_id=?',
-    [popUp],
+    [popUp.id],
     (tx, results) => {
-      this.setState({isVisible : false})
+      this.setState({isVisibleDelete : false})
       this.getAllClients()
+      db.close()
       console.log('Results', results.rowsAffected);
     })
   })
@@ -211,6 +211,34 @@ static navigationOptions = {
               <Modal isVisible = {this.state.isVisible}
                 onBackButtonPress = {()=> this.setState({isVisible : false})}
                 onBackdropPress={() => this.setState({ isVisible: false })}
+                >
+                  <View style = {{height : 200 , width : '90%' , alignSelf : 'center',
+                   backgroundColor : '#fff' , borderRadius : 25}}>
+                     <View style = {{height : 80 , backgroundColor : themeColor , 
+                      borderBottomLeftRadius : 41, justifyContent : "center" , alignItems : "center"}}>
+                      <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 16}}>Measerment Book</Text>
+                       </View>
+                       <View style = {{width : "100%" , flexDirection : "row" , 
+                       justifyContent : "space-around" , flex : 1 , alignItems : "center" }}>
+                       <TouchableOpacity style = {{height : 60 , width : 60 , backgroundColor : themeColor ,
+                        borderRadius : 5 , justifyContent : "center" , alignItems : "center"}}
+                        onPress = {()=>this.setState({isVisible : false , isVisibleDelete : true})}
+                        >
+                          <Icon type = {"font-awesome"} name = {'trash'} color  = {'#fff'} size = {45}/>
+                       </TouchableOpacity>
+                       <TouchableOpacity
+                       style = {{height : 60 , width : 60 , backgroundColor : '#EBEBEB' ,
+                        borderRadius : 5 , justifyContent : "center" , alignItems : "center"}}
+                        onPress = {()=>this.setState({isVisible : false} , ()=>this.props.navigation.navigate('EditClient' , {data : this.state.popUp})) }
+                        >
+                          <Icon type = {"font-awesome"} name = {'edit'} color  = {themeColor} size = {45}/>
+                       </TouchableOpacity>
+                         </View>
+                         </View>
+                </Modal>
+                <Modal isVisible = {this.state.isVisibleDelete}
+                onBackButtonPress = {()=> this.setState({isVisibleDelete : false})}
+                onBackdropPress={() => this.setState({ isVisibleDelete: false })}
                 >
                   <View style = {{height : 300 , width : '90%' , alignSelf : 'center',
                    backgroundColor : '#fff' , borderRadius : 25}}>
@@ -230,7 +258,7 @@ static navigationOptions = {
                       <Text style = {{color : '#fff' , fontWeight : 'bold' , fontSize : 16}}>Yes</Text>
                        </TouchableOpacity>
                        <TouchableOpacity
-                       onPress = {()=> this.setState({isVisible : false})}
+                       onPress = {()=> this.setState({isVisibleDelete : false})}
                        style = {{height : 45 , width : "40%" , backgroundColor : '#EBEBEB' ,
                         borderRadius : 25 , justifyContent : "center" , alignItems : "center"}}>
                       <Text style = {{color : '#000' , fontWeight : 'bold' , fontSize : 16}}>NO</Text>
@@ -264,7 +292,7 @@ static navigationOptions = {
                     renderItem = {({item , index})=>
                     <TouchableOpacity
                     onPress = {()=> this.props.navigation.navigate('ClienDetail' , {data : item , index : index})}
-                    onLongPress = {()=> this.setState({popUp : item.id , isVisible : true})}
+                    onLongPress = {()=> this.setState({popUp : item , isVisible : true})}
                     style = {styles.listItem}>
                        <Image source = {item.image === '' ? require('../assets/avatar.png') : {uri : `data:image/png;base64, ${item.image}` }} 
                        style = {{height : 55 , width : 55 , borderRadius : 125 , resizeMode : "cover",                  

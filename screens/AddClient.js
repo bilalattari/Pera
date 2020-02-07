@@ -92,7 +92,7 @@ var radio_props = [
       if (action !== DatePickerAndroid.dismissedAction) {
         console.log(hour ,minute , 'action')
         type === 'time' ? 
-          this.setState({time : `${hour}:${minute < 10 ?  minute + '0' :minute }`} , ()=> console.log(this.state.time , 'timeeee')) :
+          this.setState({time : `${hour < 10 ? '0' + hour : hour}:${minute < 10 ?  '0' +  minute  :minute }`} , ()=> console.log(this.state.time , 'timeeee')) :
           this.setState({reminderTime : `${hour}:${minute == '0' ? '00' :minute}`} , ()=> console.log(this.state.reminderTime , ' reminderTime timeeee')) 
 
       }

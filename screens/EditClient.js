@@ -88,7 +88,7 @@ const height = Dimensions.get('window').height
                     </TouchableOpacity>
                     <View style = {styles.header}>
                        <TouchableOpacity style = {styles.leftArrowView}
-                       onPress = {()=> this.props.navigation.navigate("ClienDetail")}>
+                       onPress = {()=> this.props.navigation.navigate("ClienDetail" , {data :userInfo })}>
                         <Icon type = {'antdesign'} color = {'#fff'} 
                          name = {'arrowleft'}  size = {20} containerStyle = {{marginRight : 4}}/>
                          <Text style = {styles.leftArrow}>Edit Client</Text>

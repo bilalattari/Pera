@@ -147,6 +147,7 @@ showImagePicker = ()=>{
                     (tx, results ,) => {
                       console.log(results , 'results')
                       this.props.navigation.navigate('Home')
+                      db.close()
                       })
       })
   }
