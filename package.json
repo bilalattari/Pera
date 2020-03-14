@@ -1,0 +1,63 @@
+{
+  "name": "BlogApp",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "cd android && gradlew clean && cd .. && react-native run-android",
+    "ios": "react-native run-ios --simulatore='iPhone 5s'",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@react-native-community/async-storage": "^1.7.1",
+    "native-base": "^2.13.8",
+    "react": "16.9.0",
+    "react-native": "0.61.5",
+    "react-native-credit-card": "^0.1.9",
+    "react-native-credit-card-input": "^0.4.1",
+    "react-native-dialog": "^5.6.0",
+    "react-native-dialog-input": "^1.0.7",
+    "react-native-document-picker": "^3.2.4",
+    "react-native-drawer": "^2.5.1",
+    "react-native-elements": "^1.2.7",
+    "react-native-fbsdk": "^1.1.1",
+    "react-native-firebase": "~5.6.0",
+    "react-native-gesture-handler": "^1.5.2",
+    "react-native-image-crop-picker": "^0.26.1",
+    "react-native-linear-gradient": "^2.5.6",
+    "react-native-loading-spinner-overlay": "^1.0.1",
+    "react-native-modal": "^11.5.3",
+    "react-native-permissions": "^2.0.8",
+    "react-native-snap-carousel": "^3.8.4",
+    "react-native-splash-screen": "^3.2.0",
+    "react-native-swipe-list-view": "^2.1.2",
+    "react-native-video": "^5.0.2",
+    "react-native-video-controls": "^2.4.0",
+    "react-navigation": "^4.0.10",
+    "react-navigation-stack": "^1.10.3",
+    "react-redux": "^7.1.3",
+    "redux": "^4.0.5",
+    "redux-persist": "^6.0.0",
+    "stripe-client": "^1.1.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/runtime": "^7.7.7",
+    "@bam.tech/react-native-make": "^1.0.3",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.8.0",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "^0.57.0",
+    "react-test-renderer": "16.9.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts"
+    ]
+  }
+}

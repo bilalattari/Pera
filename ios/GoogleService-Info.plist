@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1030461806167-grq53q6m42cib6nse6a0h0as91hp7jd9.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1030461806167-grq53q6m42cib6nse6a0h0as91hp7jd9</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAkZj9bivH19fTpKAD-by0JPMoXtngEgx0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1030461806167</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.Blogster</string>
+	<key>PROJECT_ID</key>
+	<string>blogster-20b9d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>blogster-20b9d.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1030461806167:ios:d4093c74cf404e2d983512</string>
+	<key>DATABASE_URL</key>
+	<string>https://blogster-20b9d.firebaseio.com</string>
+</dict>
+</plist>

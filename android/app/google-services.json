@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1030461806167",
+    "firebase_url": "https://blogster-20b9d.firebaseio.com",
+    "project_id": "blogster-20b9d",
+    "storage_bucket": "blogster-20b9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030461806167:android:81777b433f974d26983512",
+        "android_client_info": {
+          "package_name": "com.blogapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030461806167-rt41rc3og2qq2i4sn22vk0psn0apbscv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFjNUCNd4D1I635NT9iYnnlGYFteNx7xU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1030461806167-rt41rc3og2qq2i4sn22vk0psn0apbscv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
