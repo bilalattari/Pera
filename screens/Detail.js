@@ -10,6 +10,7 @@ import {
   ImageBackground,
   Text,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import {SearchBar, Icon, Input} from 'react-native-elements';
 import CustomInput from '../Component/Input';
@@ -21,6 +22,8 @@ import {themeColor, pinkColor} from '../Constant';
 import {connect} from 'react-redux';
 import {addToChart} from '../redux/actions/chartActions';
 
+
+let width = Dimensions.get('screen').width
 class Detail extends React.Component {
   constructor(props) {
     super(props);
@@ -76,7 +79,7 @@ class Detail extends React.Component {
         <ImageBackground
           source={{uri: data.imageUrl}}
           style={{
-            height: 250,
+            height: width/1.1,
             width: '100%',
             backgroundColor: '#ccc',
             justifyContent: 'space-between',

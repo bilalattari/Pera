@@ -27,7 +27,6 @@ class Shop extends Component {
                     products.unshift({ id: change.doc.id, ...change.doc.data() })
                     this.setState({ products: [...products], isProducts: true })
                 }
-      
               }
               if (change.type === "modified") {
                 console.log("Modified city: ", change.doc.data());
@@ -37,7 +36,6 @@ class Shop extends Component {
               }
             })
             // console.log('snapShot ====>' , snapShot);
-      
           })  
     }    
     render() {
@@ -46,14 +44,8 @@ class Shop extends Component {
         return (
             <ScrollView stickyHeaderIndices={[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
                 <CustomHeader title={'SHOP'} navigation={navigation} shop />
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, flexWrap: 'wrap' }}>
-                    {/* <View>
-                        <Image source={require('../assets/avatar.png')} style={{width: 135, height: 135}} />
-                        <View style={{flexDirection: 'row', justifyContent:'space-between'}}>
-                            <Text>Product</Text>
-                            <Text>200</Text>
-                        </View>
-                    </View> */}
+                <View style={{ flexDirection: 'row', justifyContent : "space-around",  flexWrap: 'wrap'  }}>
+                    
                     {products.map(val => 
                         <ProductContainer data={val} navigate={()=> navigation.navigate('Detail' , {data: val})} />
                     )}

@@ -33,6 +33,7 @@ import { themeColor, pinkColor } from '../Constant';
 import { NavigationEvents } from 'react-navigation';
 const dimensions = Dimensions.get('window');
 const windowHeight = dimensions.height;
+const windowScreen = dimensions.width;
 
 class Blog extends React.Component {
   constructor(props) {
@@ -99,7 +100,6 @@ class Blog extends React.Component {
             this.props.loginUser(snapshot.data());
           }
         });
-
       // IF app is open using a blog shareable external link
       if (url) {
         const extractId = url.split('/');
@@ -290,7 +290,7 @@ class Blog extends React.Component {
     });
     return (
       this.props.userObj.userId !== item.userId && (
-        <View style={{ width: '95%', marginVertical : 12 , alignSelf : "center" }}>
+        <TouchableOpacity style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
           {!this.state.fullScreenHeight && (
             <View style={styles.title}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -302,7 +302,7 @@ class Blog extends React.Component {
                   }
                   style={styles.imageStyle}
                 />
-                <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' , paddingLeft : 8 }}>
+                <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', paddingLeft: 8 }}>
                   {item.userObj.userName}
                 </Text>
               </View>
@@ -408,7 +408,7 @@ class Blog extends React.Component {
               {this._icon('ellipsis-h', '#fff')}
             </View>
           )}
-        </View>
+        </TouchableOpacity>
       )
     );
   };
@@ -448,6 +448,7 @@ class Blog extends React.Component {
       userObj: { following },
     } = this.props;
     let { follow, blogs, isBlogs, loading, usersData, isError } = this.state;
+    console.log(blogs, '+++++++++++')
     return (
       <Drawer
         ref={ref => (this._drawer = ref)}
@@ -461,7 +462,7 @@ class Blog extends React.Component {
           main: { opacity: (2 - ratio) / 2 },
         })}
         content={<ControlPanel />}>
-        <NavigationEvents onDidFocus={() => this.closeControlPanel()} />
+        <NavigationEvents onDidBlur={() => this.closeControlPanel()} />
         <ScrollView
           stickyHeaderIndices={[0]}
           style={{ backgroundColor: '#323643', flex: 1 }}>
@@ -486,15 +487,48 @@ class Blog extends React.Component {
             />
           )}
           {isError && (
-            <Text
-              style={{
-                fontSize: 19,
-                color: '#fff',
-                textAlign: 'center',
-                marginTop: 30,
-              }}>
-              Sorry no blogs found
+            <View style={{
+              justifyContent: 'center', alignItems: "center",
+              flex: 1, marginTop: "50%"
+            }}>
+              <Text
+                style={{
+                  fontSize: 19,
+                  color: '#fff',
+                  textAlign: 'center',
+                  marginTop: 30,
+                }}>
+                Follow Bloggers To Get The Blogs
+          </Text>
+              <View style={{ marginVertical: 12 }}>
+                <CustomButton title={'Follow Bloggers'}
+                  backgroundColor={pinkColor}
+                  onPress={() => this.props.navigation.navigate('SearchUsers')}
+                  width={windowScreen / 1.6} />
+              </View>
+            </View>
+          )}
+          {blogs.length === 0 && (
+            <View style={{
+              justifyContent: 'center', alignItems: "center",
+              flex: 1, marginTop: "50%"
+            }}>
+              <Text
+                style={{
+                  fontSize: 19,
+                  color: '#fff',
+                  textAlign: 'center',
+                  marginTop: 30,
+                }}>
+                Follow Bloggers To Get The Blogs
             </Text>
+              <View style={{ marginVertical: 26 }}>
+                <CustomButton title={'Follow Bloggers'}
+                  onPress={() => this.props.navigation.navigate('SearchUsers')}
+                  backgroundColor={pinkColor}
+                  width={windowScreen / 1.6} />
+              </View>
+            </View>
           )}
         </ScrollView>
       </Drawer>
@@ -523,14 +557,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 19,
     fontWeight: 'bold',
-    paddingLeft : 12,
+    paddingLeft: 12,
     marginVertical: 2,
   },
   likes: {
     color: '#ccc',
     paddingLeft: 12,
-    height  : 30,
-    justifyContent : 'center',
+    height: 30,
+    justifyContent: 'center',
     borderBottomColor: '#ccc',
     borderBottomWidth: 0.5,
   },
