@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import {
   StyleSheet,
   Image,
@@ -11,12 +11,12 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import {SearchBar, Icon} from 'react-native-elements';
-import {NavigationEvents} from 'react-navigation';
+import { SearchBar, Icon } from 'react-native-elements';
+import { NavigationEvents } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Drawer from 'react-native-drawer';
 import firebaseLib from 'react-native-firebase';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Video from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
 
@@ -25,7 +25,7 @@ import ControlPanel from '../screens/ControlPanel';
 import CustomButton from '../Component/Button';
 import CustomHeader from '../Component/header';
 
-import {themeColor, pinkColor} from '../Constant';
+import { themeColor, pinkColor } from '../Constant';
 class SelectBlog extends React.Component {
   constructor(props) {
     super(props);
@@ -46,55 +46,59 @@ class SelectBlog extends React.Component {
   };
 
   componentDidMount() {
-    const {selectedIndex} = this.state;
+    const { selectedIndex } = this.state;
     this.getBlog('photography', selectedIndex);
   }
-
   getBlog(item, index) {
+    console.log(item, 'iteem')
     this.setState(
-      {blogsArr: [], loading: true, selectedIndex: index},
+      { blogsArr: [], loading: true, selectedIndex: index },
       async () => {
         const {
-          userObj: {following},
+          userObj: { following },
         } = this.props;
-        const {blogsArr, errMessage} = this.state;
+        const { blogsArr, errMessage } = this.state;
         const db = firebaseLib.firestore();
         try {
-          const blogs = await db
-            .collection('Blog')
-            .where('category', '==', item.toLowerCase())
-            .get();
+          const blogs =
+            item === 'For you' ? await db
+              .collection('Blog')
+              .get() :
+              await db
+                .collection('Blog')
+                .where('category', '==', item.toLowerCase())
+                .get();
           if (blogs.empty) {
-            this.setState({errMessage: 'Sorry no Blogs found', blogsArr: []});
+            this.setState({ errMessage: 'Sorry no Blogs found', blogsArr: [] });
           }
 
           blogs.docs.forEach(blog => {
-            if (following.indexOf(blog.data().userId) !== -1) {
-              blogsArr.push(blog.data());
-            }
-            this.setState({blogsArr: [...blogsArr]});
+            // if (following.indexOf(blog.data().userId) === -1) {
+            blogsArr.push(blog.data());
+            // }
+            this.setState({ blogsArr: [...blogsArr] });
           });
         } catch (e) {
           alert(e.message);
         }
-        this.setState({loading: false});
+        this.setState({ loading: false });
       },
     );
   }
   videoIsReady() {
-    this.setState({hidePlayPause: false, hideSeekbar: false});
+    this.setState({ hidePlayPause: false, hideSeekbar: false });
   }
 
   render() {
-    const {navigation} = this.props;
-    let {category, blogsArr, errMessage, loading, selectedIndex} = this.state;
+    const { navigation } = this.props;
+    let { category, blogsArr, errMessage, loading, selectedIndex } = this.state;
     return (
-      <View style={{backgroundColor: '#323643', flex: 1}}>
+      <View style={{ backgroundColor: '#323643', flex: 1 }}>
         <CustomHeader navigation={navigation} title={'BLOG'} />
         <Spinner
           visible={loading}
           textContent={'Loading...'}
-          textStyle={{color: '#fff'}}
+          textStyle={{ color: '#fff' }}
         />
         <View
           style={{
@@ -106,7 +110,7 @@ class SelectBlog extends React.Component {
             data={['Photography', 'For you', 'Technology', 'Design', 'For you']}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => (
+            renderItem={({ item, index }) => (
               <TouchableOpacity onPress={() => this.getBlog(item, index)}>
                 <Text
                   style={{
@@ -125,10 +129,10 @@ class SelectBlog extends React.Component {
           <FlatList
             data={blogsArr}
             numColumns={2}
-            renderItem={({item, index}) => (
-              <View style={styles.imageContainer}>
+            renderItem={({ item, index }) => (
+              <TouchableOpacity style={styles.imageContainer}>
                 {!!item.imageUrl && (
-                  <Image source={{uri: item.imageUrl}} style={styles.image} />
+                  <Image source={{ uri: item.imageUrl }} style={styles.image} />
                 )}
                 {!!item.videoUrl && (
                   <View
@@ -139,8 +143,8 @@ class SelectBlog extends React.Component {
                     }}>
                     {Platform.OS === 'ios' ? (
                       <Video
-                        source={{uri: item.videoUrl}}
-                        style={{width: '100%', height: 250}}
+                        source={{ uri: item.videoUrl }}
+                        style={{ width: '100%', height: 250 }}
                         paused={true}
                         pictureInPicture={true}
                         controls={true}
@@ -148,35 +152,39 @@ class SelectBlog extends React.Component {
                         ref={ref => (this.videoRef = ref)}
                       />
                     ) : (
-                      <VideoPlayer
-                        source={{uri: item.videoUrl}}
-                        videoStyle={{
-                          width: '100%',
-                          height: 160,
-                        }}
-                        style={{
-                          width: '100%',
-                          height: 160,
-                        }}
-                        disableVolume={true}
-                        fullscreen={false}
-                        paused={this.state.paused}
-                        onLoad={() => this.videoIsReady()}
-                        disablePlayPause={this.state.hidePlayPause}
-                        disableSeekbar={this.state.hideSeekbar}
-                        disableBack={true}
-                      />
-                    )}
+                        <VideoPlayer
+                          source={{ uri: item.videoUrl }}
+                          videoStyle={{
+                            width: '100%',
+                            height: 160,
+                          }}
+                          style={{
+                            width: '100%',
+                            height: 160,
+                          }}
+                          disableVolume={true}
+                          fullscreen={false}
+                          paused={this.state.paused}
+                          onLoad={() => this.videoIsReady()}
+                          disablePlayPause={this.state.hidePlayPause}
+                          disableSeekbar={this.state.hideSeekbar}
+                          disableBack={true}
+                        />
+                      )}
                   </View>
                 )}
-                <Text style={styles.textHeading}>{item.blog}</Text>
-                <Text style={{color: '#ccc'}}>73 Comments</Text>
-              </View>
+                <View style={{ paddingLeft: 12, marginTop: 4 }}>
+                  <Text style={styles.textHeading}>{item.blog}</Text>
+                  <Text style={{ color: '#ccc' }}>{item.comments.length} Comments</Text>
+                </View >
+              </TouchableOpacity>
             )}
           />
         ) : (
-          <Text style={styles.errMessage}>{errMessage}</Text>
-        )}
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+              <Text style={styles.errMessage}>{errMessage}</Text>
+            </View>
+          )}
       </View>
     );
   }
@@ -186,18 +194,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  imageContainer: {width: '47%', margin: 5},
+  imageContainer: { width: '47%', margin: 5 },
   image: {
-    height: 160,
+    height: 200,
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 12,
     marginVertical: 4,
   },
-  textHeading: {color: '#fff', fontWeight: 'bold', fontSize: 16},
-  drawer: {shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
-  main: {paddingLeft: 3},
-  errMessage: {color: '#fff', textAlign: 'center', fontSize: 20, marginTop: 20},
+  textHeading: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3 },
+  main: { paddingLeft: 3 },
+  errMessage: { color: '#fff', textAlign: 'center', fontSize: 20, marginTop: 20 },
 });
 
 const mapDispatchToProps = dispatch => {

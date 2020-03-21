@@ -98,8 +98,8 @@ class SearchUsers extends Component {
               ]}
             />
           </View>
-          <View style={styles.userContainer}>
             <TouchableOpacity
+            style={styles.userContainer}
               onPress={() => navigation.navigate('Profile', {otherUser: item})}>
               <Text style={styles.userName}>{item.userName}</Text>
             </TouchableOpacity>
@@ -108,7 +108,6 @@ class SearchUsers extends Component {
               onPress={() => this.startChat(`${item.userId}`)}>
               <Text style={styles.chatBtn}>Chat</Text>
             </TouchableOpacity>
-          </View>
         </View>
       )
     );

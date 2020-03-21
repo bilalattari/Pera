@@ -290,7 +290,7 @@ class Blog extends React.Component {
     });
     return (
       this.props.userObj.userId !== item.userId && (
-        <View style={{ width: '100%', marginBottom: 25 }}>
+        <View style={{ width: '95%', marginVertical : 12 , alignSelf : "center" }}>
           {!this.state.fullScreenHeight && (
             <View style={styles.title}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -302,8 +302,7 @@ class Blog extends React.Component {
                   }
                   style={styles.imageStyle}
                 />
-
-                <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>
+                <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' , paddingLeft : 8 }}>
                   {item.userObj.userName}
                 </Text>
               </View>
@@ -324,7 +323,7 @@ class Blog extends React.Component {
                 width: '100%',
                 alignSelf: 'center',
                 marginVertical: 11,
-                borderRadius: 5,
+                borderRadius: 12,
               }}
             />
           )}
@@ -511,7 +510,7 @@ const styles = StyleSheet.create({
     height: 45,
     width: 45,
     borderRadius: 125,
-    marginHorizontal: 12,
+    marginHorizontal: 2,
     resizeMode: 'contain',
   },
   title: {
@@ -524,14 +523,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 19,
     fontWeight: 'bold',
-    paddingLeft: 6,
-    lineHeight: 26,
-    marginVertical: 8,
+    paddingLeft : 12,
+    marginVertical: 2,
   },
   likes: {
     color: '#ccc',
     paddingLeft: 12,
-    paddingBottom: 4,
+    height  : 30,
+    justifyContent : 'center',
     borderBottomColor: '#ccc',
     borderBottomWidth: 0.5,
   },

@@ -20,7 +20,7 @@ export default CustomButton = props => (
       ) : null
     }
     {...props}
-    containerStyle={[{alignSelf: 'center', width: 140}, props.containerStyle]}
+    containerStyle={[{alignSelf: 'center', width: props.width ?props.width :  140}, props.containerStyle]}
     buttonStyle={[
       {
         backgroundColor: props.backgroundColor
