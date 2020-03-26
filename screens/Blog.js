@@ -57,9 +57,9 @@ class Blog extends React.Component {
   };
 
   async componentDidMount() {
-    this.props.navigation.addListener('didFocus' , ()=>{
+    // this.props.navigation.addListener('didFocus', () => {
       this.getBlogs()
-    })
+    // })
   }
   getBlogs = async () => {
     // this.setState({ loading: true });
@@ -121,41 +121,80 @@ class Blog extends React.Component {
       }
       // IF app opens directly
       else {
-        const response = await db
-          .collection('Blog')
-          .orderBy('createdAt', 'desc')
-          .where('category', '==', blogCategory)
-          .onSnapshot(snapShot => {
-            if (snapShot.empty) {
-              this.setState({ loading: false, isError: true })
-              return
-            }
-            snapShot.docChanges.forEach(change => {
-              if (change.type === 'added') {
-                const { blogs } = this.state;
-                if (
-                  following.indexOf(change.doc.data().userId) !== -1 &&
-                  !change.doc.data().deleted
-                ) {
-                  blogs.push({ id: change.doc.id, ...change.doc.data() });
-                  usersIds.push(change.doc.data().userId);
+        if (typeof (blogCategory) !== 'object') {
+          const response = await db
+            .collection('Blog')
+            .orderBy('createdAt', 'desc')
+            .where('category', '==', blogCategory)
+            .onSnapshot(snapShot => {
+              if (snapShot.empty) {
+                this.setState({ loading: false, isError: true })
+                return
+              }
+              snapShot.docChanges.forEach(change => {
+                if (change.type === 'added') {
+                  const { blogs } = this.state;
+                  if (
+                    following.indexOf(change.doc.data().userId) !== -1 &&
+                    !change.doc.data().deleted
+                  ) {
+                    blogs.push({ id: change.doc.id, ...change.doc.data() });
+                    usersIds.push(change.doc.data().userId);
+                  }
+                  this.setState({ blogs: [...blogs], isBlogs: true });
                 }
-                this.setState({ blogs: [...blogs], isBlogs: true });
-              }
-              if (change.type === 'modified') {
-                const { blogs } = this.state;
-                const findedIndex = blogs.findIndex(
-                  item => item.id === change.doc.id,
-                );
-                blogs[findedIndex] = { id: change.doc.id, ...change.doc.data() };
-                this.setState({ blogs });
-              }
+                if (change.type === 'modified') {
+                  const { blogs } = this.state;
+                  const findedIndex = blogs.findIndex(
+                    item => item.id === change.doc.id,
+                  );
+                  blogs[findedIndex] = { id: change.doc.id, ...change.doc.data() };
+                  this.setState({ blogs });
+                }
+              });
+              // console.log('snapShot ====>' , snapShot);
+              this.setState({ usersIds }, () => {
+                this.gettingUsersInfo();
+              });
             });
-            // console.log('snapShot ====>' , snapShot);
-            this.setState({ usersIds }, () => {
-              this.gettingUsersInfo();
-            });
-          });
+        }
+        else {
+          let blogs = []
+          blogCategory.map(async (category, index) => {
+            const response = await db
+              .collection('Blog')
+              .orderBy('createdAt', 'desc')
+              .where('category', '==', category)
+              .onSnapshot(snapShot => {
+                if (!snapShot.empty) {
+                  snapShot.docChanges.forEach(change => {
+                    if (change.type === 'added') {
+                      if (
+                        following.indexOf(change.doc.data().userId) !== -1 &&
+                        !change.doc.data().deleted
+                      ) {
+                        blogs.push({ id: change.doc.id, ...change.doc.data() });
+                        usersIds.push(change.doc.data().userId);
+                      }
+                      this.setState({ blogs: [...blogs], isBlogs: true });
+                    }
+                    if (change.type === 'modified') {
+                      const { blogs } = this.state;
+                      const findedIndex = blogs.findIndex(
+                        item => item.id === change.doc.id,
+                      );
+                      blogs[findedIndex] = { id: change.doc.id, ...change.doc.data() };
+                      this.setState({ blogs });
+                    }
+                  });
+                }
+                // console.log('snapShot ====>' , snapShot);
+                this.setState({ usersIds }, () => {
+                  this.gettingUsersInfo();
+                });
+              });
+          })
+        }
       }
     } catch (e) {
       console.log('Error', e.message);
@@ -229,23 +268,23 @@ class Blog extends React.Component {
       alert(error.message);
     }
   }
-
   like = async blog => {
     const db = firebaseLib.firestore();
     const FieldValue = firebaseLib.firestore.FieldValue;
     const {
-      userObj: { userId , photoUrl , userName },
+      userObj: { userId, photoUrl, userName },
     } = this.props;
     try {
       let obj = {
-        msg : 'likes your blog',
-        userName : userName,
-        userID : userId,
-        likedPost : "",
-        photoUrl : photoUrl,
-        type : 'like',
-        receiver : blog.userId,
-        time : `${new Date().toLocaleString()}`}
+        msg: 'likes your blog',
+        userName: userName,
+        userID: userId,
+        likedPost: "",
+        photoUrl: photoUrl,
+        type: 'like',
+        receiver: blog.userId,
+        time: `${new Date().toLocaleString()}`
+      }
       await db
         .collection('Blog')
         .doc(blog.id)
@@ -301,7 +340,7 @@ class Blog extends React.Component {
     });
     return (
       this.props.userObj.userId !== item.userId && (
-        <TouchableOpacity key = {index} style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
+        <TouchableOpacity key={index} style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
           {!this.state.fullScreenHeight && (
             <View style={styles.title}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -479,7 +518,7 @@ class Blog extends React.Component {
             <CustomHeader
               home
               title={'BLOG'}
-              icon = {true}
+              icon={true}
               navigation={navigation}
               onPress={() => this.openControlPanel()}
             />
@@ -496,7 +535,7 @@ class Blog extends React.Component {
               renderItem={({ item, index }) => this.blog(item, index)}
             />
           )}
-          {isError && (
+          {/* {isError && (
             <View style={{
               justifyContent: 'center', alignItems: "center",
               flex: 1, marginTop: "50%"
@@ -517,13 +556,13 @@ class Blog extends React.Component {
                   width={windowScreen / 1.6} />
               </View>
             </View>
-          )}
-          {blogs.length === 0 && (
+          )} */}
+          {blogs.length === 0 || isError && (
             <TouchableOpacity style={{
               justifyContent: 'center', alignItems: "center",
               flex: 1, marginTop: "50%"
-            }} onPress = {()=> navigation.navigate('SearchUsers')}>
-              <Icon type  ={'material-community'} name = {'blogger'} color = {'#fff'} size = {60} />
+            }} onPress={() => navigation.navigate('SearchUsers')}>
+              <Icon type={'material-community'} name={'blogger'} color={'#fff'} size={60} />
               <Text
                 style={{
                   fontSize: 19,
@@ -531,9 +570,9 @@ class Blog extends React.Component {
                   textAlign: 'center',
                   marginTop: 30,
                 }}>
-                Follow Bloggers 
+                Follow Bloggers
             </Text>
-           
+
             </TouchableOpacity>
           )}
         </ScrollView>

@@ -7,7 +7,7 @@ import { themeColor, pinkColor } from '../Constant/index';
 import Logo from '../Component/LogoImage';
 export default CustomHeader = props => (
   <View>
-    {console.log(props)}
+    {/* {console.log(props)} */}
     <StatusBar backgroundColor={themeColor} translucent />
     <Header
       barStyle="light-content" // or directly
@@ -41,7 +41,6 @@ export default CustomHeader = props => (
         ) :
           props.shop ? (
             <TouchableOpacity
-              
               onPress={() => props.navigation.navigate('Yourchart')}>
               <Image
                 source={require('../assets/cart.png')}

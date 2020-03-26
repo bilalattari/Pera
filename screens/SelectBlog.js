@@ -19,7 +19,6 @@ import firebaseLib from 'react-native-firebase';
 import { connect } from 'react-redux';
 import Video from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
-
 import CustomInput from '../Component/Input';
 import ControlPanel from '../screens/ControlPanel';
 import CustomButton from '../Component/Button';
@@ -39,6 +38,17 @@ class SelectBlog extends React.Component {
       paused: true,
       hidePlayPause: true,
       hideSeekbar: true,
+      categoryList: [
+        { name: "Photography", image: require('../assets/interest/photography.jpg'), selected: false },
+        { name: "Food", image: require('../assets/interest/food.jpg'), selected: false },
+        { name: "Health", image: require('../assets/interest/health.png'), selected: false },
+        { name: "Lifestyle", image: require('../assets/interest/lifestyle.jpg'), selected: false },
+        { name: "Politics", image: require('../assets/interest/politics.jpg'), selected: false },
+        { name: "Sports", image: require('../assets/interest/sports.jpg'), selected: false },
+        { name: "Travel", image: require('../assets/interest/music.jpg'), selected: false },
+        { name: "Music", image: require('../assets/interest/photography.jpg'), selected: false },
+        { name: "Business", image: require('../assets/interest/business.jpg'), selected: false },
+      ],
     };
   }
   static navigationOptions = {
@@ -50,12 +60,12 @@ class SelectBlog extends React.Component {
     this.getBlog('photography', selectedIndex);
   }
   getBlog(item, index) {
-    console.log(item, 'iteem')
+    console.log(item.name, 'iteem')
     this.setState(
       { blogsArr: [], loading: true, selectedIndex: index },
       async () => {
         const {
-          userObj: { following },
+          userObj: { following , blogCategory },
         } = this.props;
         const { blogsArr, errMessage } = this.state;
         const db = firebaseLib.firestore();
@@ -66,16 +76,15 @@ class SelectBlog extends React.Component {
               .get() :
               await db
                 .collection('Blog')
-                .where('category', '==', item.toLowerCase())
+                .where('category', '==', item.name.toLowerCase())
                 .get();
           if (blogs.empty) {
             this.setState({ errMessage: 'Sorry no Blogs found', blogsArr: [] });
           }
-
           blogs.docs.forEach(blog => {
-            // if (following.indexOf(blog.data().userId) === -1) {
+            if (following.indexOf(blog.data().userId) === -1) {
             blogsArr.push(blog.data());
-            // }
+            }
             this.setState({ blogsArr: [...blogsArr] });
           });
         } catch (e) {
@@ -91,7 +100,7 @@ class SelectBlog extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    let { category, blogsArr, errMessage, loading, selectedIndex } = this.state;
+    let { category, blogsArr, errMessage, loading, selectedIndex , categoryList } = this.state;
     return (
       <View style={{ backgroundColor: '#323643', flex: 1 }}>
         <CustomHeader navigation={navigation} title={'BLOG'} />
@@ -102,12 +111,12 @@ class SelectBlog extends React.Component {
         />
         <View
           style={{
-            height: 60,
+            height: 50,
             borderBottomColor: '#ccc',
             borderBottomWidth: 0.3,
           }}>
           <FlatList
-            data={['Photography', 'For you', 'Technology', 'Design', 'For you']}
+            data={categoryList}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => (
@@ -117,9 +126,10 @@ class SelectBlog extends React.Component {
                     padding: 12,
                     color: selectedIndex === index ? '#fff' : '#bbb',
                     fontSize: 16,
+                    fontWeight : selectedIndex === index ? 'bold' : 'normal',
                   }}>
                   {' '}
-                  {item}
+                  {item.name}
                 </Text>
               </TouchableOpacity>
             )}
