@@ -1,23 +1,25 @@
 /* eslint-disable */
 
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import {
   StyleSheet,
-  View,
+  View, Dimensions,
   TouchableOpacity,
   Text,
   ScrollView,
 } from 'react-native';
-import {Icon, Input, Button} from 'react-native-elements';
-import {connect} from 'react-redux';
-
+import { Icon, Input, Button } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { themeColor, pinkColor } from '../Constant/index';
 import CustomHeader from '../Component/header';
 import CustomButton from '../Component/Button';
 import firebase from '../utils/firebase';
 import firebaseLib from 'react-native-firebase';
-import {loginUser} from '../redux/actions/authActions';
+import { loginUser } from '../redux/actions/authActions';
 import Spinner from 'react-native-loading-spinner-overlay';
 
+const height = Dimensions.get('screen').height
+const marginTop = height - 480 > 25 ? (height - 475) / 2 : 0
 class EmailAccount extends React.Component {
   constructor(props) {
     super(props);
@@ -34,38 +36,36 @@ class EmailAccount extends React.Component {
     header: null,
   };
   sText(key, value) {
-    this.setState({[key]: value});
+    this.setState({ [key]: value });
   }
   checkValidation = () => {
-    const {email, password, confirmPassword} = this.state;
+    const { email, password, confirmPassword } = this.state;
     if (!email || !password || !confirmPassword) {
-      this.setState({email: null, password: null, confirmPassword: null});
+      this.setState({ email: null, password: null, confirmPassword: null });
       alert('All Fields Are Required');
       return true;
     }
     if (password !== confirmPassword) {
-      this.setState({password: null, confirmPassword: null});
+      this.setState({ password: null, confirmPassword: null });
       alert('passwords Should Match');
       return true;
     }
   };
 
   async signUp() {
-    const {userName, email, password, number, country} = this.state;
-    const {navigation} = this.props;
+    const { userName, email, password, number, country } = this.state;
+    const { navigation } = this.props;
     const db = firebaseLib.firestore();
-
     if (this.checkValidation()) return;
-
     try {
-      this.setState({loading: true});
+      this.setState({ loading: true });
       const isNumber = await db
         .collection('Users')
         .where('number', '==', number)
         .get();
       if (!isNumber.empty) {
         alert('this number is already associated with another account');
-        this.setState({loading: false});
+        this.setState({ loading: false });
         return;
       }
 
@@ -81,10 +81,10 @@ class EmailAccount extends React.Component {
     } catch (e) {
       alert(e.message);
     }
-    this.setState({loading: false});
+    this.setState({ loading: false });
   }
   render() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     const {
       userName,
       email,
@@ -95,20 +95,23 @@ class EmailAccount extends React.Component {
       country
     } = this.state;
     return (
-      <ScrollView style={{backgroundColor: '#323643', flex: 1}}>
+      <ScrollView style={{ backgroundColor: '#323643', flex: 1 }}>
         <Spinner
           visible={loading}
           textContent={'Loading...'}
-          textStyle={{color: '#fff'}}
+          textStyle={{ color: '#fff' }}
         />
         <CustomHeader navigation={navigation} title={'Sign Up'} />
         <View
-          style={{flex: 1, alignItems: 'center', justifyContent: 'flex-end'}}>
+          style={{
+            alignItems: 'center', justifyContent: 'flex-end', 
+            marginTop: marginTop , marginHorizontal : 4
+          }}>
           <Input
             placeholder={'Username'}
             placeholderTextColor={'#fff'}
             inputContainerStyle={styles.inputContainer}
-            inputStyle={{fontWeight: 'bold', color:'#fff'}}
+            inputStyle={{ fontWeight: 'bold', color: '#fff' }}
             onChangeText={userName => this.sText('userName', userName)}
             value={userName}
           />
@@ -116,7 +119,7 @@ class EmailAccount extends React.Component {
             placeholder={'Email'}
             placeholderTextColor={'#fff'}
             inputContainerStyle={styles.inputContainer}
-            inputStyle={{fontWeight: 'bold', color:'#fff'}}
+            inputStyle={{ fontWeight: 'bold', color: '#fff' }}
             onChangeText={email => this.sText('email', email)}
             value={email}
           />
@@ -124,7 +127,7 @@ class EmailAccount extends React.Component {
             placeholder={'Phone number with country code'}
             placeholderTextColor={'#fff'}
             inputContainerStyle={styles.inputContainer}
-            inputStyle={{fontWeight: 'bold', color:'#fff'}}
+            inputStyle={{ fontWeight: 'bold', color: '#fff' }}
             onChangeText={number => this.sText('number', number)}
             value={number}
             keyboardType="number-name-phone-pad"
@@ -134,7 +137,7 @@ class EmailAccount extends React.Component {
             secureTextEntry={true}
             placeholderTextColor={'#fff'}
             inputContainerStyle={styles.inputContainer}
-            inputStyle={{fontWeight: 'bold', color:'#fff'}}
+            inputStyle={{ fontWeight: 'bold', color: '#fff' }}
             onChangeText={password => this.sText('password', password)}
             value={password}
           />
@@ -143,7 +146,7 @@ class EmailAccount extends React.Component {
             secureTextEntry={true}
             placeholderTextColor={'#fff'}
             inputContainerStyle={styles.inputContainer}
-            inputStyle={{fontWeight: 'bold', color:'#fff'}}
+            inputStyle={{ fontWeight: 'bold', color: '#fff' }}
             onChangeText={confirmPassword =>
               this.sText('confirmPassword', confirmPassword)
             }
@@ -153,17 +156,17 @@ class EmailAccount extends React.Component {
             placeholder={'Country'}
             placeholderTextColor={'#fff'}
             inputContainerStyle={styles.inputContainer}
-            inputStyle={{fontWeight: 'bold', color:'#fff'}}
+            inputStyle={{ fontWeight: 'bold', color: '#fff' }}
             onChangeText={country =>
               this.sText('country', country)
             }
             value={country}
           />
-
-          <View style={{marginVertical: 12, width: '100%'}}>
+          <View style={{ marginVertical: 12, width: '100%' }}>
             <CustomButton
               title={'Sign Up'}
-              containerStyle={{width: '90%'}}
+              backgroundColor={pinkColor}
+              containerStyle={{ width: '90%' }}
               buttonStyle={{
                 borderColor: '#ccc',
                 borderWidth: 1,
@@ -199,8 +202,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     marginHorizontal: 6,
   },
-  bottomLink: {fontSize: 14, fontWeight: 'bold', color: '#ccc'},
-  line: {flex: 1, height: 0.5, borderWidth: 0.3, borderColor: '#ccc'},
+  bottomLink: { fontSize: 14, fontWeight: 'bold', color: '#ccc' },
+  line: { flex: 1, height: 0.5, borderWidth: 0.3, borderColor: '#ccc' },
 });
 const mapDispatchToProps = dispatch => {
   return {

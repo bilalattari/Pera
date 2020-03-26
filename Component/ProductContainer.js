@@ -15,8 +15,8 @@ class ProductContainer extends Component {
             <Image
               source={{ uri: data.imageUrl }}
               style={{
-                width: width / 2.2, height: width / 2.2, alignSelf: "center",
-                resizeMode: 'contain', borderRadius: 7 ,
+                width: width / 2.2, height: width / 2.5, alignSelf: "center",
+                resizeMode: 'cover', borderRadius: 7 ,
               }}
             />
             <View style={styles.prodcutDetailContainer}>

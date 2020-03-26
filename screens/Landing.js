@@ -154,7 +154,7 @@ class LandingScreen extends React.Component {
           <CustomButton
             onPress={index !== 5 ?  this.goNext :() => this.props.navigation.navigate('CreateAccount') }
             title={'Next'} backgroundColor={pinkColor}
-            containerStyle={{ width: 90, height: 30 }} height={45} />
+            containerStyle={{ width: 90, height : 40}} height={45} />
         </View>
       </View>
 

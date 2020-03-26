@@ -7,12 +7,11 @@ import {
   View,
   TouchableOpacity,
   FlatList, ImageBackground,
-  Text,
   ScrollView,
 } from 'react-native'
 import { SearchBar, Icon, Input } from 'react-native-elements'
-import CustomInput from '../Component/Input'
-import CustomButton from '../Component/Button'
+import Text from '../Component/Text'
+import Button from '../Component/Button'
 import CustomHeader from '../Component/header'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import HorizontalList from '../Component/HorizontalList'
@@ -36,16 +35,16 @@ class Yourchart extends React.Component {
   }
 
   async componentDidMount() {
-    try{
+    try {
       const products = await firebase.getCollection('Products')
       this.setState({ products });
-      
+
     }
-    catch(e){
+    catch (e) {
       alert(e.message)
     }
   }
-  
+
   goforPay(amount) {
     this.props.navigation.navigate('ProductPay', { amount })
   }
@@ -53,7 +52,7 @@ class Yourchart extends React.Component {
   removeFromCart = (data) => {
     const { chart, addToChart } = this.props
     const findedIndex = chart.findIndex(item => item.id === data.id)
-    chart.splice(findedIndex , 1)
+    chart.splice(findedIndex, 1)
     addToChart(chart)
   }
   render() {
@@ -65,20 +64,29 @@ class Yourchart extends React.Component {
     let { next } = this.state
     return (
       <ScrollView stickyHeaderIndices={[0]} style={{ backgroundColor: '#323643', flex: 1 }}>
-        <CustomHeader navigation={navigation} title={'Your Chart'} />
+        <CustomHeader navigation={navigation} title={'Your Cart'} />
         {!!chart.length ?
           chart.map(val => (
             <ChartContainer data={val} removeFromCart={this.removeFromCart} />
           ))
           :
-          <Text>You Don't Have Any Item In Your Chart</Text>
+          <View style={styles.cartContainer}>
+            <Icon type={'material-community'} name={'cart-outline'}
+              color={'#fff'}
+              size={60} containerStyle={{ marginVertical: 15 }} />
+            <Text text={"You Don't Have Any Item In Your Chart"} />
+          </View>
         }
         {!!chart.length &&
-          <TouchableOpacity style={styles.btnContainer} onPress={()=> this.goforPay(amount)}>
-            <Text style={styles.payText}>Pay</Text>
-            <Text style={styles.amount}>{`${amount}$`}</Text>
-          </TouchableOpacity>}
-        <Text style={styles.listHeading}>Last Viewed</Text>
+        <Button title = {`Pay (${amount}$)`} 
+        onPress={()=> this.goforPay(amount)} 
+        backgroundColor = {pinkColor} 
+        height = {45} width = {'90%'} />
+          }
+        <Text font={20} text={"Last Viewed"} bold={true}
+          align={'left'}
+          style={{ margin: 12, marginLeft: 12 }} />
+        {/* <Text style={styles.listHeading}>Last Viewed</Text> */}
         {!!products.length && <HorizontalList productInfo={true} data={products} />}
         {/* <Text style={styles.listHeading}>Your Wish List</Text>
         <HorizontalList productInfo={true} /> */}
@@ -90,6 +98,10 @@ class Yourchart extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  cartContainer: {
+    height: 300, justifyContent: 'center', alignItems: "center", borderBottomColor: '#ccc',
+    borderBottomWidth: 0.5, marginHorizontal: 12
   },
   title: { flexDirection: 'row', paddingHorizontal: 6, alignItems: 'center', justifyContent: 'space-between' },
   imageStyle: {

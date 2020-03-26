@@ -1,23 +1,22 @@
 /* eslint-disable */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  Text,
   View,
   ScrollView,
   StyleSheet,
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {Icon, Input, Button} from 'react-native-elements';
-import {connect} from 'react-redux';
+import { Icon, Input } from 'react-native-elements';
+import { connect } from 'react-redux';
 import firebaseLib from 'react-native-firebase';
 import Spinner from 'react-native-loading-spinner-overlay';
-
-import CustomButton from '../Component/Button';
-import {themeColor, pinkColor} from '../Constant';
+import Text from '../Component/Text'
+import Button from '../Component/Button'
+import { themeColor, pinkColor } from '../Constant';
 import firebase from '../utils/firebase';
-import {emptyChart} from '../redux/actions/chartActions';
+import { emptyChart } from '../redux/actions/chartActions';
 
 const stripe = require('stripe-client')(
   'pk_test_CoqYQbVZ6tJwY9dFWN7UTfin00QpVQsX20',
@@ -39,15 +38,15 @@ class ProductPay extends Component {
     header: null,
   };
   async componentDidMount() {
-    const {userObj, navigation} = this.props;
-    const {email, userId} = userObj;
+    const { userObj, navigation } = this.props;
+    const { email, userId } = userObj;
     const userData = await firebase.getDocument('Users', userId);
     const customerId = userData.data().customerId;
-    this.setState({email, customerId});
+    this.setState({ email, customerId });
   }
 
   validateFields = () => {
-    const {cardNumber, expMonth, expYear, cvcNumber} = this.state;
+    const { cardNumber, expMonth, expYear, cvcNumber } = this.state;
     if (!cardNumber || !expMonth || !expYear || !cvcNumber) {
       alert('All Fileds are Required');
       return true;
@@ -55,7 +54,7 @@ class ProductPay extends Component {
   };
 
   productObjToEmail = () => {
-    const {chart} = this.props;
+    const { chart } = this.props;
     const objToSend = [];
     chart.map((item, i) => {
       const findedIndex = objToSend.findIndex(
@@ -97,8 +96,8 @@ class ProductPay extends Component {
     const subscription = this.props.navigation.state.params.subscription;
     const type = this.props.navigation.state.params.type;
     const amount = this.props.navigation.state.params.amount;
-    const {userObj, emptyChart, navigation, chart} = this.props;
-    const {userId, last4Acc} = userObj;
+    const { userObj, emptyChart, navigation, chart } = this.props;
+    const { userId, last4Acc } = userObj;
     const emailObj = this.productObjToEmail();
 
     const productDetails = {
@@ -124,7 +123,7 @@ class ProductPay extends Component {
     };
     try {
       let customer = customerId;
-      this.setState({loading: true});
+      this.setState({ loading: true });
       if (!customerId) {
         // Creating stripe customer id if not found in database
         let customerId = await fetch('https://blogstar.app/customer-id', {
@@ -139,14 +138,14 @@ class ProductPay extends Component {
         customerId = await customerId.json();
         customerId = customerId.response.id;
         customer = customerId;
-        await firebase.updateDoc('Users', userId, {customerId});
-        this.setState({customerId});
+        await firebase.updateDoc('Users', userId, { customerId });
+        this.setState({ customerId });
       }
       // generating token for stripe customer payment source
       let token = await stripe.createToken(params);
       if ('error' in token) {
         alert(token.error.message);
-        this.setState({loading: false});
+        this.setState({ loading: false });
         return;
       }
       token = token.id;
@@ -170,11 +169,11 @@ class ProductPay extends Component {
       if ('errorMessage' in fingerPrint) {
         const {
           errorMessage: {
-            raw: {message},
+            raw: { message },
           },
         } = fingerPrint;
         alert(message);
-        this.setState({loading: false});
+        this.setState({ loading: false });
         return;
       }
       // customerId = customerId.response.id
@@ -182,7 +181,7 @@ class ProductPay extends Component {
 
       if (!subscription) {
         // One time Pay
-        if(!address){
+        if (!address) {
           this.setState({ loading: false })
           alert('All fields are required')
           return
@@ -209,11 +208,11 @@ class ProductPay extends Component {
         if ('errorMessage' in chargeResponse) {
           const {
             errorMessage: {
-              raw: {message},
+              raw: { message },
             },
           } = chargeResponse;
           alert('message');
-          this.setState({loading: false});
+          this.setState({ loading: false });
           return;
         }
         const productDetails = {
@@ -224,7 +223,7 @@ class ProductPay extends Component {
           createdAt: Date.now(),
         };
         chart.map((item, index) => {
-          const c = {...item};
+          const c = { ...item };
           c.sellerId = chart[index].userId;
           delete c.userId;
           delete c.createdAt;
@@ -232,7 +231,7 @@ class ProductPay extends Component {
         });
         await firebase.addDocument('Orders', productDetails);
       } else {
-        if(!accNum && !last4Acc){
+        if (!accNum && !last4Acc) {
           this.setState({ loading: false })
           return alert('All Fields are required')
         }
@@ -255,7 +254,7 @@ class ProductPay extends Component {
         chargeSubscription = await chargeSubscription.json();
         if ('errorMessage' in chargeSubscription) {
           alert('Something went wrong try again later');
-          this.setState({loading: false});
+          this.setState({ loading: false });
           return;
         }
         const updateUserDoc = {
@@ -263,7 +262,7 @@ class ProductPay extends Component {
           userPackage: type,
           subscriptionId: chargeSubscription.subscription.id,
         };
-        if(accNum){
+        if (accNum) {
           updateUserDoc.accNo = accNum
           updateUserDoc.encrypted = false
           updateUserDoc.last4Acc = accNum.slice(accNum.length - 4)
@@ -280,28 +279,27 @@ class ProductPay extends Component {
         .add(fingerPrint.response);
 
       emptyChart();
-      this.setState({loading: false});
+      this.setState({ loading: false });
       alert('Success');
       navigation.replace('Blog');
     } catch (e) {
       console.log('Error ====>', e);
     }
-    this.setState({loading: false});
+    this.setState({ loading: false });
   }
   goToSavedCards() {
     const amount = this.props.navigation.state.params.amount;
     const subscription = this.props.navigation.state.params.subscription;
     const type = this.props.navigation.state.params.type;
-    const {address} = this.state;
-
-    const {customerId} = this.state;
+    const { address } = this.state;
+    const { customerId } = this.state;
     const data = {
       amount,
       customer: customerId,
       address: address,
     };
-    const {navigation} = this.props;
-    navigation.navigate('SavedCards', {data, subscription, type});
+    const { navigation } = this.props;
+    navigation.navigate('SavedCards', { data, subscription, type });
   }
 
   render() {
@@ -322,11 +320,11 @@ class ProductPay extends Component {
     return (
       <ScrollView
         style={styles.container}
-        contentContainerStyle={{flexGrow: 1}}>
+        contentContainerStyle={{ flexGrow: 1 }}>
         <Spinner
           visible={loading}
           textContent={'Loading...'}
-          textStyle={{color: '#fff'}}
+          textStyle={{ color: '#fff' }}
         />
         <View
           style={{
@@ -336,20 +334,19 @@ class ProductPay extends Component {
             justifyContent: 'space-between',
             marginHorizontal: 15,
           }}>
-          <Text
-            style={{
+            <Text text = {'Payment'} style = {{
               color: '#fff',
               fontSize: 25,
               fontWeight: 'bold',
               marginTop: 12,
-            }}>
-            Payment
-          </Text>
+            }} />
+        
           <Icon
             type={'font-awesome'}
             name={'angle-left'}
             color={'#fff'}
-            containerStyle={{marginTop: 8}}
+            onPress = {()=> this.props.navigation.goBack()}
+            containerStyle={{ marginTop: 8 }}
             size={25}
           />
         </View>
@@ -360,12 +357,13 @@ class ProductPay extends Component {
             marginHorizontal: 12,
             marginVertical: 12,
           }}>
-          <CustomButton
+          <Button
             title={'Back'}
-            buttonStyle={{borderColor: '#ccc', borderWidth: 1}}
-            onPress={() => this.back()}
+            buttonStyle={{ borderColor: '#ccc', borderWidth: 1 }}
+            onPress={() => this.props.navigation.goBack()}
           />
-          <CustomButton
+          <Button
+            width={190}
             title={'Pay By Saved Cards'}
             backgroundColor={pinkColor}
             onPress={() => this.goToSavedCards()}
@@ -375,8 +373,8 @@ class ProductPay extends Component {
           <Input
             placeholder={'Email '}
             value={email}
-            placeholderTextColor={'#fff'}
-            inputContainerStyle={{height: 80}}
+            placeholderTextColor={'#ccc'}
+            inputContainerStyle={{ height: 80 }}
             inputStyle={{
               color: '#fff',
               letterSpacing: 2,
@@ -387,83 +385,84 @@ class ProductPay extends Component {
           {!subscription && <Input
             placeholder={'Address '}
             value={address}
-            placeholderTextColor={'#fff'}
-            inputContainerStyle={{height: 80}}
+            placeholderTextColor={'#ccc'}
+            inputContainerStyle={{ height: 80 }}
             inputStyle={{
               color: '#fff',
               letterSpacing: 2,
             }}
-            onChangeText={text => this.setState({address: text})}
-          /> }
+            onChangeText={text => this.setState({ address: text })}
+          />}
           <Input
             placeholder={'Card Number'}
             value={cardNumber}
-            placeholderTextColor={'#fff'}
-            inputContainerStyle={{height: 80}}
+            placeholderTextColor={'#ccc'}
+            inputContainerStyle={{ height: 80 }}
             inputStyle={{
               color: '#fff',
               letterSpacing: 2,
             }}
-            onChangeText={text => this.setState({cardNumber: text})}
+            onChangeText={text => this.setState({ cardNumber: text })}
             keyboardType="number-pad"
           />
           {subscription && (
             <Input
               placeholder={'Acc Number for revcieve payments'}
               value={last4Acc ? `*********${last4Acc}` : accNum}
-              placeholderTextColor={'#fff'}
-              inputContainerStyle={{height: 80}}
+              placeholderTextColor={'#ccc'}
+              inputContainerStyle={{ height: 80 }}
               inputStyle={{
                 color: '#fff',
                 letterSpacing: 2,
               }}
-              onChangeText={text => this.setState({accNum: text})}
-              disabled= { last4Acc ? true : false }
+              onChangeText={text => this.setState({ accNum: text })}
+              disabled={last4Acc ? true : false}
             />
           )}
           <Input
             placeholder={'Expiration month'}
             value={expMonth}
-            placeholderTextColor={'#fff'}
-            inputContainerStyle={{height: 80}}
+            placeholderTextColor={'#ccc'}
+            inputContainerStyle={{ height: 80 }}
             inputStyle={{
               color: '#fff',
               letterSpacing: 2,
             }}
-            onChangeText={text => this.setState({expMonth: text})}
+            onChangeText={text => this.setState({ expMonth: text })}
             keyboardType="number-pad"
           />
           <Input
             placeholder={'Expiration Year'}
             value={expYear}
-            placeholderTextColor={'#fff'}
-            inputContainerStyle={{height: 80}}
+            placeholderTextColor={'#ccc'}
+            inputContainerStyle={{ height: 80 }}
             inputStyle={{
               color: '#fff',
               letterSpacing: 2,
             }}
-            onChangeText={text => this.setState({expYear: text})}
+            onChangeText={text => this.setState({ expYear: text })}
             keyboardType="number-pad"
           />
           <Input
             placeholder={'CVC number'}
             value={cvcNumber}
-            placeholderTextColor={'#fff'}
-            inputContainerStyle={{height: 80}}
+            placeholderTextColor={'#ccc'}
+            inputContainerStyle={{ height: 80 }}
             inputStyle={{
               color: '#fff',
               letterSpacing: 2,
             }}
-            onChangeText={text => this.setState({cvcNumber: text})}
+            onChangeText={text => this.setState({ cvcNumber: text })}
             keyboardType="number-pad"
           />
         </>
-        <TouchableOpacity
-          style={styles.btnContainer}
-          onPress={() => this.pay()}>
-          <Text style={styles.payText}>Pay</Text>
-          <Text style={styles.amount}>{`${amount}$`}</Text>
-        </TouchableOpacity>
+        <Button
+          backgroundColor = {pinkColor}
+          width = {'80%'}
+          style={{marginVertical : 21}}
+          onPress={() => this.pay()}
+          title = {`Pay ${amount}$`}
+          />
       </ScrollView>
     );
   }

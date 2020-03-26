@@ -18,7 +18,6 @@ import {themeColor, pinkColor} from '../Constant';
 import Dialogue from '../Component/Dialogue';
 import {emptyChart} from '../redux/actions/chartActions';
 import firebase from '../utils/firebase';
-
 class SavedCards extends Component {
   state = {
     cards: [],
@@ -231,6 +230,7 @@ class SavedCards extends Component {
             type={'font-awesome'}
             name={'angle-left'}
             color={'#fff'}
+            onPress = {()=> this.props.navigation.goBack()}
             containerStyle={{marginTop: 8}}
             size={25}
           />
@@ -239,7 +239,7 @@ class SavedCards extends Component {
           <Input
             placeholder={'Address '}
             value={address}
-            placeholderTextColor={'#fff'}
+            placeholderTextColor={'#ccc'}
             inputContainerStyle={{height: 80}}
             inputStyle={{
               color: '#fff',

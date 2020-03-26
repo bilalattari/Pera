@@ -2,7 +2,7 @@
 
 import React, { Fragment } from 'react';
 import {
-  StyleSheet,
+  StyleSheet, Dimensions,
   View, TouchableOpacity,
   Text, ScrollView
 } from 'react-native';
@@ -20,11 +20,10 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-community/google-signin';
-
-
-
 import { Icon, Input, Button } from 'react-native-elements'
 import { SafeAreaView } from 'react-navigation';
+const height = Dimensions.get('screen').height
+const marginTop = height - 420 > 25 ? (height - 425) / 1.4 : 0
 class Login extends React.Component {
   constructor(props) {
     super(props)
@@ -110,7 +109,7 @@ class Login extends React.Component {
     }
   }
 
-  googleLogin = async ()=>{
+  googleLogin = async () => {
     GoogleSignin.configure({
       scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
       webClientId: '1030461806167-rt41rc3og2qq2i4sn22vk0psn0apbscv.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
@@ -124,7 +123,7 @@ class Login extends React.Component {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo , 'userInfo')
+      console.log(userInfo, 'userInfo')
       // this.setState({ userInfo });
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -158,58 +157,55 @@ class Login extends React.Component {
             size={25} />
         </View> */}
         <CustomHeader navigation={navigation} title={'Login'} />
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: "flex-end" }}>
+        <ScrollView style={{ flex: 1,  }}>
+          <View style={{ width: '100%',marginTop : marginTop }}>
+            <Text style={styles.bottomLink}>SIGN IN WIDTH</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '100%',
+                justifyContent: 'space-around',
+                marginVertical: 12,
+              }}>
+              <CustomButton
+                onPress={() => this.facebookLogin()}
+                containerStyle={{ width: 160 }}
+                title={'Facebook'}
+                backgroundColor={'#3b5998'}
+              />
+              <CustomButton
+                onPress={this.googleLogin}
+                containerStyle={{ width: 160 }}
+                title={'Google'}
+                backgroundColor={'#00aced'}
+              />
+            </View>
+            <Input placeholder={'Email'} placeholderTextColor={'#fff'}
+              inputContainerStyle={styles.inputContainer} inputStyle={{ fontWeight: 'bold', color: '#fff' }} onChangeText={(email) => this.setState({ email: email })} value={email} />
 
-          <View style={{ width: '100%', minHeight: 220 }}>
-            <ScrollView>
-              <Text style={styles.bottomLink}>SIGN IN WIDTH</Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: '100%',
-                  justifyContent: 'space-around',
-                  marginVertical: 12,
-                }}>
-                <CustomButton
-                  onPress={() => this.facebookLogin()}
-                  containerStyle={{ width: 160 }}
-                  title={'Facebook'}
-                  backgroundColor={'#3b5998'}
-                />
-                <CustomButton
-                  onPress={this.googleLogin}
-                  containerStyle={{ width: 160 }}
-                  title={'Google'}
-                  backgroundColor={'#00aced'}
-                />
-              </View>
-              <Input placeholder={'Email'} placeholderTextColor={'#fff'}
-                inputContainerStyle={styles.inputContainer} inputStyle={{ fontWeight: 'bold', color: '#fff' }} onChangeText={(email) => this.setState({ email: email })} value={email} />
+            <Input placeholder={'Password'} secureTextEntry={true} placeholderTextColor={'#fff'}
+              inputContainerStyle={styles.inputContainer} inputStyle={{ fontWeight: 'bold', color: '#fff' }} onChangeText={(password) => this.setState({ password: password })} value={password} />
 
-              <Input placeholder={'Password'} secureTextEntry={true} placeholderTextColor={'#fff'}
-                inputContainerStyle={styles.inputContainer} inputStyle={{ fontWeight: 'bold', color: '#fff' }} onChangeText={(password) => this.setState({ password: password })} value={password} />
-
-              <Text style={[styles.bottomLink, { marginVertical: 12 }]}>OR</Text>
-              <View style={{ marginVertical: 4, width: '100%' }}>
-                <CustomButton
-                  onPress={() => this.login()}
-                  containerStyle={{ width: '90%' }}
-                  title={'LOGIN'}
-                  buttonStyle={{ height: 42 }}
-                  backgroundColor={pinkColor}
-                />
-              </View>
-              <View style={{ width: '100%' }}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("CreateAccount")} style={{ height: 30, justifyContent: "center" }}>
-                  <Text style={styles.bottomLink}>Need An Account ?<Text style={{ color: '#FD7496' }}>  Sign Up</Text></Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate("ForgotPassword")} style={{ height: 30, justifyContent: "center" }}>
-                  <Text style={[styles.bottomLink, { marginVertical: 12 }]}>Forget Your Password ?<Text style={{ color: '#FD7496' }}>  Retrive</Text></Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
+            <Text style={[styles.bottomLink, { marginVertical: 12 }]}>OR</Text>
+            <View style={{ marginVertical: 4, width: '100%' }}>
+              <CustomButton
+                onPress={() => this.login()}
+                containerStyle={{ width: '90%' }}
+                title={'LOGIN'}
+                buttonStyle={{ height: 42 }}
+                backgroundColor={pinkColor}
+              />
+            </View>
+            <View style={{ width: '100%' }}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate("CreateAccount")} style={{ height: 30, justifyContent: "center" }}>
+                <Text style={styles.bottomLink}>Need An Account ?<Text style={{ color: '#FD7496' }}>  Sign Up</Text></Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate("ForgotPassword")} style={{ height: 30, justifyContent: "center" }}>
+                <Text style={[styles.bottomLink, { marginVertical: 12 }]}>Forget Your Password ?<Text style={{ color: '#FD7496' }}>  Retrive</Text></Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
