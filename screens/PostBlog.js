@@ -11,6 +11,7 @@ import {
   CameraRoll,
   Image,
   Platform,
+  TextInput,
   Dimensions,
 } from 'react-native';
 import {Icon, Input, Button} from 'react-native-elements';
@@ -21,7 +22,6 @@ import Video from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Picker} from 'native-base';
-
 import {themeColor, pinkColor} from '../Constant';
 import CustomButton from '../Component/Button';
 import firebase from '../utils/firebase';
@@ -258,16 +258,23 @@ class PostBlog extends React.Component {
         )}
         {!fullScreenHeight && (
           <>
-            <Input
+            <TextInput
               placeholder={'Title'}
               value={blogTitle}
               placeholderTextColor={'#fff'}
-              inputContainerStyle={{height: 80}}
-              inputStyle={{
-                textAlign: 'center',
+              multiline = {true}
+              numberOfLines = {2}
+              underlineColorAndroid = {themeColor}
+              style={{
+                // textAlign: 'center',
                 color: '#fff',
                 fontWeight: 'bold',
+                minHeight : 80,
+                textDecorationLine : "none",
+                borderBottomColor  : '#ccc',
+                borderBottomWidth : 1, 
                 letterSpacing: 2,
+                textDecorationLine  :"none",
                 fontSize: 20,
               }}
               onChangeText={text => this.setState({blogTitle: text})}

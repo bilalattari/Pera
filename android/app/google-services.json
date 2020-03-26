@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1030461806167-ffcr9bd0m19t7asmdlqhhippl69d1mec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.blogapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "1030461806167-rt41rc3og2qq2i4sn22vk0psn0apbscv.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +38,13 @@
             {
               "client_id": "1030461806167-rt41rc3og2qq2i4sn22vk0psn0apbscv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1030461806167-grq53q6m42cib6nse6a0h0as91hp7jd9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Blogster"
+              }
             }
           ]
         }

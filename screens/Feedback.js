@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import {
   StyleSheet,
   Image,
@@ -11,63 +11,109 @@ import {
   ScrollView,
   Linking,
 } from 'react-native';
-import {SearchBar, Icon} from 'react-native-elements';
+import { SearchBar, Icon } from 'react-native-elements';
 import CustomInput from '../Component/Input';
 import ControlPanel from '../screens/ControlPanel';
 import CustomButton from '../Component/Button';
-import {NavigationEvents} from 'react-navigation';
-import {connect} from 'react-redux';
+import { NavigationEvents } from 'react-navigation';
+import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import firebaseLib from 'react-native-firebase';
-
 import CustomHeader from '../Component/header';
-import {SwipeListView} from 'react-native-swipe-list-view';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import Drawer from 'react-native-drawer';
 import firebase from '../utils/firebase';
-import {loginUser} from '../redux/actions/authActions';
-
-import {themeColor, pinkColor} from '../Constant';
+import { loginUser } from '../redux/actions/authActions';
+import moment from 'moment'
+import { themeColor, pinkColor } from '../Constant';
 class Feedback extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       comments: false,
       users: [],
+      allComments: [],
+      allOthers: [],
       loading: true,
     };
   }
   static navigationOptions = {
     header: null,
   };
-
-  swipListItem = (item, index) => (
-    <View
-      style={[
-        styles.itemContainer,
-        {
-          flexDirection: 'column',
-          minHeight: 110,
-          alignItems: 'flex-start',
-          width: '95%',
-          justifyContent: 'space-around',
-        },
-      ]}>
-      <View style={{flexDirection: 'row', padding: 6, alignItems: 'center'}}>
+  async componentDidMount() {
+    this.getComments()
+  }
+  closeControlPanel = () => {
+    this._drawer.close();
+  };
+  openControlPanel = () => {
+    this._drawer.open();
+  };
+  getComments = async () => {
+    const db = firebaseLib.firestore();
+    const {
+      userObj: { userId, userName, photoUrl },
+      navigation,
+    } = this.props;
+    const { userData } = this.state;
+    let comments = []
+    let others = []
+    await db
+      .collection('Notification').
+      where('receiver' ,'==' , userId )
+      .onSnapshot(snapShot => {
+        if (snapShot.empty) {
+          this.setState({
+            loading: false, isError: true, allComments: [], allOthers: []
+          })
+          return
+        }
+        else {
+          snapShot.docChanges.forEach(notifs => {
+            let notificatoin = notifs.doc.data()
+            // console.log(userId , notificatoin.userID)
+            if (notificatoin.type === 'comment' && notificatoin.userID !== userId) {
+              comments.push(notificatoin)
+            }
+            if (notificatoin.type !== 'comment' && notificatoin.userID !== userId) {
+              others.push(notificatoin)
+            }
+          })
+        }
+      })
+    this.setState({ allComments: comments, allOthers: others })
+  }
+  swipListItem = (item, index) => {
+    // console.log(item, 'item')
+    return (
+      <View
+        style={[
+          styles.itemContainer,
+          {
+            flexDirection: 'row',
+            minHeight: 80,
+            width: '95%',
+          },
+        ]}>
         <Image
           source={require('../assets/avatar.png')}
           style={styles.imageStyle}
         />
-        <Text style={{color: '#fff', fontSize: 16, fontWeight: 'bold'}}>
-          Jesicca DOE
-        </Text>
+        <View >
+          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>
+            {item.item.userName}
+            <Text style={{ fontWeight: "normal", fontSize: 12 }}>  commented on your post</Text>
+          </Text>
+          <Text style={{ color: '#ccc', paddingVertical: 6 }}>
+            {item.item.comment}
+          </Text>
+        </View>
       </View>
-      <Text style={{color: '#ccc', marginHorizontal: 25}}>
-        Lorun Ispem Lorun Ispem Lorun Ispem Lorun Ispem Lorun Ispem Lorun Ispem
-      </Text>
-    </View>
-  );
-
-  feedBackListItem = (item, index) =>
+    );
+  }
+  feedBackListItem = (item, index) => {
+    console.log(item.time)  
+    return (
       <View style={styles.itemContainer}>
         <View>
           <Image
@@ -88,25 +134,24 @@ class Feedback extends React.Component {
           />
         </View>
         <View>
-          <Text style={{color: '#fff', fontSize: 15, fontWeight: 'bold'}}>
-            {' '}
-            Ivan Morris{' '}
-            <Text style={{fontWeight: '400', color: '#ccc', fontSize: 12}}>
-              {' '}
-              added you to friends
-            </Text>
+          <Text style={{ color: '#fff', fontSize: 15, fontWeight: 'bold' }}>
+            {item.userName}{' '}
+            <Text style={{ fontWeight: '400', color: '#ccc', fontSize: 12 }}>
+              {item.msg}              </Text>
           </Text>
-          <Text style={{color: '#ccc', fontSize: 12}}> 4 Hrs ago</Text>
+          <Text style={{ color: '#ccc', fontSize: 12 }}>{moment(new Date(item.time)).fromNow()}</Text>
         </View>
       </View>
+    )
+  }
 
   render() {
-    const {navigation , userObj} = this.props;
-    if(userObj === undefined){
+    const { navigation, userObj } = this.props;
+    if (userObj === undefined) {
       navigation.navigate('Auth')
       return null
     }
-    let {comments, users, loading} = this.state;
+    let { comments, users, loading, allComments, allOthers } = this.state;
     return (
       <Drawer
         ref={ref => (this._drawer = ref)}
@@ -117,16 +162,11 @@ class Feedback extends React.Component {
         closedDrawerOffset={-3}
         styles={styles.drawer}
         tweenHandler={ratio => ({
-          main: {opacity: (2 - ratio) / 2},
+          main: { opacity: (2 - ratio) / 2 },
         })}
         content={<ControlPanel />}>
-        {/* <Spinner
-          visible={loading}
-          textContent={'Loading...'}
-          textStyle={{ color: '#fff' }}
-        /> */}
         <NavigationEvents onDidFocus={() => this.closeControlPanel()} />
-        <View style={{backgroundColor: '#323643', flex: 1}}>
+        <View style={{ backgroundColor: '#323643', flex: 1 }}>
           <CustomHeader
             home
             title={comments ? 'Comments' : 'Feedback'}
@@ -140,7 +180,7 @@ class Feedback extends React.Component {
               borderBottomColor: themeColor,
             }}
             placeholder={'Search'}
-            inputContainerStyle={{backgroundColor: '#fff'}}
+            inputContainerStyle={{ backgroundColor: '#fff' }}
           />
           <View
             style={{
@@ -149,24 +189,39 @@ class Feedback extends React.Component {
               marginBottom: 12,
             }}>
             <CustomButton
-              // onPress={() => this.setState({ comments: true })}
-              buttonStyle={styles.commentButton}
+              onPress={() => this.setState({ comments: true })}
               title={'Comments'}
-              backgroundColor={comments ? themeColor : pinkColor}
+              buttonStyle={[styles.commentButton,
+              { borderColor: !comments ? pinkColor : themeColor, borderWidth: 0.5 }]}
+              backgroundColor={!comments ? '#000000' : pinkColor}
+              titleStyle={[styles.textPink, { color: comments ? '#fff' : pinkColor }]}
             />
             <CustomButton
-              // onPress={() => this.setState({ comments: false })}
-              buttonStyle={styles.commentButton}
-              backgroundColor={!comments ? '#000000' : pinkColor}
+              onPress={() => this.setState({ comments: false })}
               title={'Feedback'}
-              titleStyle={styles.textPink}
-              // onPress={() => Linking.openURL('example://blog')}
+              buttonStyle={[styles.commentButton,
+              { borderColor: comments ? pinkColor : themeColor, borderWidth: 0.5 }]}
+              backgroundColor={comments ? '#000000' : pinkColor}
+              titleStyle={[styles.textPink, { color: !comments ? '#fff' : pinkColor }]}
             />
           </View>
-
+          {
+            comments && allComments.length === 0 ?
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: "center" }}>
+                <Icon type={'ionicon'} name={'ios-notifications-outline'} color={'#fff'} size={60} />
+                <Text style={{ color: "#fff", fontSize: 15 }}>No Comments For You</Text>
+              </View> : null
+          }
+          {
+            !comments && allOthers.length === 0 ?
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: "center" }}>
+                <Icon type={'font-awesome'} name={'comment-o'} color={'#fff'} size={60} />
+                <Text style={{ color: "#fff", fontSize: 15  , marginVertical : 12}}>No Feedbacks For You</Text>
+              </View> : null
+          }
           {comments ? (
             <SwipeListView
-              data={['1', '2', '3', '4', '5', '6', '7']}
+              data={allComments}
               renderItem={(data, rowMap) => this.swipListItem(data, rowMap)}
               renderHiddenItem={(data, rowMap) => (
                 <View
@@ -187,12 +242,12 @@ class Feedback extends React.Component {
               rightOpenValue={-75}
             />
           ) : (
-            <FlatList
-              data={['1', '2', '3', '4', '5', '6', '7']}
-              keyExtractor={item => item}
-              renderItem={({item, index}) => this.feedBackListItem(item, index)}
-            />
-          )}
+              <FlatList
+                data={allOthers}
+                keyExtractor={item => item}
+                renderItem={({ item, index }) => this.feedBackListItem(item, index)}
+              />
+            )}
         </View>
       </Drawer>
     );
@@ -203,11 +258,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  drawer: {shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3},
-  main: {paddingLeft: 3},
+  drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3 },
+  main: { paddingLeft: 3 },
   imageStyle: {
-    height: 45,
-    width: 45,
+    height: 36,
+    width: 36,
     borderRadius: 125,
     marginHorizontal: 12,
     resizeMode: 'contain',

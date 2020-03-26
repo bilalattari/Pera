@@ -20,11 +20,15 @@ import firebase from '../utils/firebase';
 import { themeColor, pinkColor } from '../Constant';
 
 class SearchUsers extends Component {
-  state = {
-    users: [],
-    loading: false,
-    user: '',
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      users: [],
+      loading: false,
+      user: '',
+    };
+    this.allUsers = []
+  }
   static navigationOptions = {
     header: null,
   };
@@ -47,7 +51,10 @@ class SearchUsers extends Component {
           users.push(item.data())
         }
       });
-      if (!users.length) alert('No User Found');
+      if (!users.length) {
+        alert('No User Found')
+        this.setState({ users: this.allUsers })
+      }
       this.setState({ users });
     } catch (e) {
       alert(e.message);
@@ -65,6 +72,7 @@ class SearchUsers extends Component {
           users.unshift(item.data())
         }
       });
+      this.allUsers = users
       this.setState({ users });
     }
     catch (err) {
@@ -80,7 +88,9 @@ class SearchUsers extends Component {
 
     return (
       this.props.userObj.userId !== item.userId && (
-        <View style={styles.itemContainer}>
+        <TouchableOpacity 
+        onPress={() => navigation.navigate('Profile', { otherUser: item })}
+        style={styles.itemContainer}>
           <View>
             {item.photoUrl ? (
               <Image
@@ -110,18 +120,16 @@ class SearchUsers extends Component {
             flex: 1, justifyContent: 'space-between', paddingRight: 25
             , alignItems: "center", flexDirection: "row"
           }}>
-            <TouchableOpacity
-              style={styles.userContainer}
-              onPress={() => navigation.navigate('Profile', { otherUser: item })}>
+            <View  style={styles.userContainer}>
               <Text style={styles.userName}>{item.userName}</Text>
-            </TouchableOpacity>
+            </View>
             <TouchableOpacity
               style={styles.chatBtnContainer}
               onPress={() => this.startChat(`${item.userId}`)}>
               <Text style={styles.chatBtn}>Chat</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </TouchableOpacity>
       )
     );
   };
@@ -154,7 +162,11 @@ class SearchUsers extends Component {
               value={user}
               placeholder={'Search'}
               inputContainerStyle={{ backgroundColor: '#fff' }}
-              onChangeText={user => this.setState({ user: user })}
+              onChangeText={user => this.setState({ user: user }, () => {
+                if (this.state.user.length === 0) {
+                  this.setState({users : this.allUsers})
+                }
+              })}
               onEndEditing={() => {
                 if (this.state.user.length > 2) {
                   this.search()

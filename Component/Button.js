@@ -31,5 +31,6 @@ export default CustomButton = props => (
       },
       props.buttonStyle,
     ]}
+    
   />
 );

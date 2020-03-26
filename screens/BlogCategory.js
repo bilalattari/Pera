@@ -50,22 +50,32 @@ class BlogCategory extends React.Component {
   };
 
   async selectBlogCategory(category, index) {
+    let list = this.state.categoryList
+    list[index].selected = !list[index].selected
+    try {
+      this.setState({ categoryList: list });
+
+    } catch (e) {
+      console.log(e.message);
+    }
+    this.setState({ laoding: false });
+  }
+  addBlogCategory = async () => {
     const {
       userObj: { userId },
       navigation,
     } = this.props;
-    let list = this.state.categoryList
-    list[index].selected = !list[index].selected 
-    try {
-      this.setState({ categoryList : list });
-      // await firebase.updateDoc('Users', userId, { blogCategory: category.toLowerCase() });
-      // navigation.navigate('App');
-    } catch (e) {
-      // alert(e.message);
-    }
-    this.setState({ laoding: false });
+    let { categoryList } = this.state
+    let categories = []
+    await categoryList.map((data, index) => {
+      if (data.selected) {
+        categories.push(data.name.toLowerCase())
+      }
+    })
+    console.log(categories, 'categories')
+    await firebase.updateDoc('Users', userId, { blogCategory: categories });
+    navigation.navigate('App');
   }
-
   render() {
     const color = ['#f78da7', '#abb8c3', '#00d084', '#03a9f4', '#ff5722   '];
     const { navigation } = this.props;
@@ -119,9 +129,10 @@ class BlogCategory extends React.Component {
             )
           }
         </View>
-        <CustomButton 
-        backgroundColor={pinkColor} 
-        title = {'Next'} />
+        <CustomButton
+          backgroundColor={pinkColor}
+          onPress={this.addBlogCategory}
+          title={'Next'} />
       </ScrollView>
     );
   }

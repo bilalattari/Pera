@@ -27,7 +27,6 @@ class App extends Component {
     super(props);
     console.disableYellowBox = true;
   }
-
   async componentDidMount() {
 
     setTimeout(() => {

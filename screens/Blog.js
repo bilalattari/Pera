@@ -47,7 +47,7 @@ class Blog extends React.Component {
       hidePlayPause: true,
       hideSeekbar: true,
       fullScreenHeight: null,
-      loading: true,
+      loading: false,
       usersData: [],
       isError: false,
     };
@@ -57,13 +57,17 @@ class Blog extends React.Component {
   };
 
   async componentDidMount() {
-    this.setState({ loading: true });
+    this.props.navigation.addListener('didFocus' , ()=>{
+      this.getBlogs()
+    })
+  }
+  getBlogs = async () => {
+    // this.setState({ loading: true });
     const {
       userObj: { userId },
     } = this.props;
     firebaseLib.notifications().onNotificationOpened(notificationOpen => {
       navigation.navigate('Messages');
-
       // Get information about the notification that was opened
       // const notification: Notification = notificationOpen.notification;
     });
@@ -78,14 +82,12 @@ class Blog extends React.Component {
     // ******************************************
     const db = firebaseLib.firestore();
     Linking.addEventListener('url', this.handleDeepLink);
-    this.setState({ loading: false });
-
+    // this.setState({ loading: false });
     const {
       userObj: { following, blogCategory },
       navigation,
     } = this.props;
     const usersIds = [];
-
     try {
       const url = await Linking.getInitialURL();
       if (url) {
@@ -163,7 +165,6 @@ class Blog extends React.Component {
     // const snapShot = response.docChanges().forEach(() => (
     //     console.log('Response =====>', change.doc.data())))
   }
-
   fcmToken = async () => {
     const fcm = firebaseLib.messaging();
     const db = firebaseLib.firestore();
@@ -229,25 +230,35 @@ class Blog extends React.Component {
     }
   }
 
-  like = async blogId => {
+  like = async blog => {
     const db = firebaseLib.firestore();
     const FieldValue = firebaseLib.firestore.FieldValue;
     const {
-      userObj: { userId },
+      userObj: { userId , photoUrl , userName },
     } = this.props;
     try {
+      let obj = {
+        msg : 'likes your blog',
+        userName : userName,
+        userID : userId,
+        likedPost : "",
+        photoUrl : photoUrl,
+        type : 'like',
+        receiver : blog.userId,
+        time : `${new Date().toLocaleString()}`}
       await db
         .collection('Blog')
-        .doc(blogId)
+        .doc(blog.id)
         .update({
           likes: FieldValue.arrayUnion(userId),
         });
+      await db.collection("Notification").add(obj)
     } catch (e) {
       alert(e.message);
     }
   };
 
-  unLike = async blogId => {
+  unLike = async blog => {
     const db = firebaseLib.firestore();
     const FieldValue = firebaseLib.firestore.FieldValue;
     const {
@@ -256,7 +267,7 @@ class Blog extends React.Component {
     try {
       await db
         .collection('Blog')
-        .doc(blogId)
+        .doc(blog.id)
         .update({
           likes: FieldValue.arrayRemove(userId),
         });
@@ -290,7 +301,7 @@ class Blog extends React.Component {
     });
     return (
       this.props.userObj.userId !== item.userId && (
-        <TouchableOpacity style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
+        <TouchableOpacity key = {index} style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
           {!this.state.fullScreenHeight && (
             <View style={styles.title}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -398,8 +409,8 @@ class Blog extends React.Component {
               }}>
               <View style={{ flexDirection: 'row' }}>
                 {!item.likes.includes(userId)
-                  ? this._icon('heart-o', pinkColor, () => this.like(item.id))
-                  : this._icon('heart', pinkColor, () => this.unLike(item.id))}
+                  ? this._icon('heart-o', pinkColor, () => this.like(item))
+                  : this._icon('heart', pinkColor, () => this.unLike(item))}
                 {this._icon('bookmark-o', '#fff', () => this.share(item))}
                 {this._icon('comment-o', '#fff', () =>
                   this.props.navigation.navigate('Comments', { blog: item }),
@@ -441,14 +452,12 @@ class Blog extends React.Component {
     }
     this.setState({ loading: false });
   }
-
   render() {
     const {
       navigation,
       userObj: { following },
     } = this.props;
     let { follow, blogs, isBlogs, loading, usersData, isError } = this.state;
-    console.log(blogs, '+++++++++++')
     return (
       <Drawer
         ref={ref => (this._drawer = ref)}
@@ -470,7 +479,8 @@ class Blog extends React.Component {
             <CustomHeader
               home
               title={'BLOG'}
-              // navigation={navigation}
+              icon = {true}
+              navigation={navigation}
               onPress={() => this.openControlPanel()}
             />
           )}
@@ -509,26 +519,22 @@ class Blog extends React.Component {
             </View>
           )}
           {blogs.length === 0 && (
-            <View style={{
+            <TouchableOpacity style={{
               justifyContent: 'center', alignItems: "center",
               flex: 1, marginTop: "50%"
-            }}>
+            }} onPress = {()=> navigation.navigate('SearchUsers')}>
+              <Icon type  ={'material-community'} name = {'blogger'} color = {'#fff'} size = {60} />
               <Text
                 style={{
                   fontSize: 19,
-                  color: '#fff',
+                  color: pinkColor,
                   textAlign: 'center',
                   marginTop: 30,
                 }}>
-                Follow Bloggers To Get The Blogs
+                Follow Bloggers 
             </Text>
-              <View style={{ marginVertical: 26 }}>
-                <CustomButton title={'Follow Bloggers'}
-                  onPress={() => this.props.navigation.navigate('SearchUsers')}
-                  backgroundColor={pinkColor}
-                  width={windowScreen / 1.6} />
-              </View>
-            </View>
+           
+            </TouchableOpacity>
           )}
         </ScrollView>
       </Drawer>

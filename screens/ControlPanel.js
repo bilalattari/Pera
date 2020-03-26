@@ -62,6 +62,7 @@ class ControlPanel extends React.Component {
         <View  style = {{flex : 1, justifyContent : "center" ,}}>
           {/* <Image source = {require('../assets/logo.jpeg')}
              style = {{height : 300 , width : 300 , resizeMode : "contain"}} /> */}
+          {this.menuButtons('Blogs', 'Blog')}
           {this.menuButtons('Profile', 'Profile')}
           {/* {this.menuButtons('BLOG', 'Blog', true)} */}
           {this.menuButtons('Messages', 'Messages')}
