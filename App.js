@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   Platform,
   StyleSheet,
@@ -11,14 +11,15 @@ import {
   Linking,
 } from 'react-native';
 import Routes from './navigation';
-import {themeColor} from './Constant/index';
-import {store, persistor} from './redux/store';
+import { themeColor } from './Constant/index';
+import { store, persistor } from './redux/store';
 import { withNavigation } from 'react-navigation'
-import {Provider} from 'react-redux';
-import {PersistGate} from 'redux-persist/integration/react';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import firebase from 'react-native-firebase'
 import { NotificationOpen } from 'react-native-firebase';
 import SplashScreen from 'react-native-splash-screen';
+import { WebView } from 'react-native-webview';
 
 // import DeepLinking from 'react-native-deep-linking';
 
@@ -26,35 +27,37 @@ class App extends Component {
   constructor(props) {
     super(props);
     console.disableYellowBox = true;
+    this.state ={
+      showSplash : true
+    }
   }
   async componentDidMount() {
-
     setTimeout(() => {
-      SplashScreen.hide();
-    }, 1000)
-    
-  //   firebase.notifications().onNotification((notification) => {
-  //     console.log('notification =====>', notification);
-      
-  // });
-  // firebase.notifications().onNotificationOpened((notificationOpen) => {
+      this.setState({showSplash : false})
+    }, 5000)
+
+    //   firebase.notifications().onNotification((notification) => {
+    //     console.log('notification =====>', notification);
+
+    // });
+    // firebase.notifications().onNotificationOpened((notificationOpen) => {
     // Get the action triggered by the notification being opened
     // const action = notificationOpen.action;
     // console.log('notificationOpen=======>', notificationOpen);
     // navigation.navigate('Messages')
-    
+
     // Get information about the notification that was opened
     // const notification: Notification = notificationOpen.notification;
-// });
-//     const notification = await firebase.notifications().getInitialNotification();
+    // });
+    //     const notification = await firebase.notifications().getInitialNotification();
     // if(notification){
     //   navigation.navigate('Messages')
     // }
 
-  //   firebase.messaging().onMessage((message) => {
-  //     console.log('message ===================>', message);
-      
-  // });
+    //   firebase.messaging().onMessage((message) => {
+    //     console.log('message ===================>', message);
+
+    // });
 
     console.log('componentDidMount');
     console.log('PRops =========>', this.props);
@@ -84,7 +87,16 @@ class App extends Component {
   // };
 
   render() {
+    let {showSplash} = this.state
     return (
+      showSplash ? 
+      <View style={{ flex: 1, justifyContent: 'center' , backgroundColor: themeColor, }}>
+        <View style={{ height: 400 }}>
+          <WebView
+            style={{ backgroundColor: themeColor, height: 400 }}
+            source={{ html: "<img src='https://firebasestorage.googleapis.com/v0/b/blogster-20b9d.appspot.com/o/LOGO.svg?alt=media&token=edf285c3-6ae4-4304-869e-0402eb25875f' title='' />" }} />
+        </View>
+      </View>: 
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <Routes />
