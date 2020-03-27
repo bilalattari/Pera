@@ -90,10 +90,10 @@ class App extends Component {
     let {showSplash} = this.state
     return (
       showSplash ? 
-      <View style={{ flex: 1, justifyContent: 'center' , backgroundColor: themeColor, }}>
+      <View style={{ flex: 1, justifyContent: 'center' , backgroundColor: '#fff', }}>
         <View style={{ height: 400 }}>
           <WebView
-            style={{ backgroundColor: themeColor, height: 400 }}
+            style={{  height: 400  , backgroundColor: '#fff',}}
             source={{ html: "<img src='https://firebasestorage.googleapis.com/v0/b/blogster-20b9d.appspot.com/o/LOGO.svg?alt=media&token=edf285c3-6ae4-4304-869e-0402eb25875f' title='' />" }} />
         </View>
       </View>: 
