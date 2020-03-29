@@ -22,7 +22,8 @@ import VideoPlayer from 'react-native-video-controls';
 import firebaseLib from 'react-native-firebase';
 import {connect} from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
-
+import ControlPanel from '../screens/ControlPanel';
+import Drawer from 'react-native-drawer';
 import {themeColor, pinkColor} from '../Constant';
 const dimensions = Dimensions.get('window');
 const windowHeight = dimensions.height;
@@ -39,6 +40,9 @@ class BlogDetail extends React.Component {
   static navigationOptions = {
     header: null,
   };
+  componentDidMount(){
+    this.props.navigation.addListener('didBlur', () => this.closeControlPanel())
+  }
   videoIsReady() {
     this.setState({hidePlayPause: false, hideSeekbar: false});
   }
@@ -82,13 +86,30 @@ class BlogDetail extends React.Component {
     }
     this.setState({loading: false});
   }
-
+  closeControlPanel = () => {
+    this._drawer.close();
+  };
+  openControlPanel = () => {
+    this._drawer.open();
+  };
   render() {
     const {fullScreenHeight, loading} = this.state;
     const {navigation, userObj:{ userId }} = this.props;
     const data = this.props.navigation.state.params.data;
     let {follow} = this.state;
     return (
+      <Drawer
+      ref={ref => (this._drawer = ref)}
+      type="overlay"
+      tapToClose={true}
+      openDrawerOffset={0.2} // 20% gap on the right side of drawer
+      panCloseMask={0.2}
+      closedDrawerOffset={-3}
+      styles={styles.drawer}
+      tweenHandler={ratio => ({
+        main: { opacity: (2 - ratio) / 2 },
+      })}
+      content={<ControlPanel />}>
       <ScrollView style={{backgroundColor: '#323643', flex: 1}}>
         <Spinner
           visible={loading}
@@ -101,6 +122,7 @@ class BlogDetail extends React.Component {
               title={'BLOG'}
               navigation={navigation}
               home={true}
+              onPress={() => this.openControlPanel()}
               bookmark={true}
             />
             <View style={styles.title}>
@@ -203,6 +225,7 @@ class BlogDetail extends React.Component {
           </View>
         )}
       </ScrollView>
+      </Drawer>
     );
   }
 }

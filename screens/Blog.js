@@ -57,9 +57,8 @@ class Blog extends React.Component {
   };
 
   async componentDidMount() {
-    // this.props.navigation.addListener('didFocus', () => {
-      this.getBlogs()
-    // })
+    this.getBlogs()
+      // this.props.navigation.addListener('didBlur', () => this.closeControlPanel())
   }
   getBlogs = async () => {
     // this.setState({ loading: true });
@@ -149,6 +148,7 @@ class Blog extends React.Component {
                     item => item.id === change.doc.id,
                   );
                   blogs[findedIndex] = { id: change.doc.id, ...change.doc.data() };
+                  
                   this.setState({ blogs });
                 }
               });
@@ -338,9 +338,12 @@ class Blog extends React.Component {
         item.userObj = user;
       }
     });
+    console.log(item , 'itemmmmmmmmmmmmmmmmmmm')
     return (
       this.props.userObj.userId !== item.userId && (
-        <TouchableOpacity key={index} style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
+        <TouchableOpacity key={index} 
+        onPress={() => this.navigateToDetail(item)}
+        style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
           {!this.state.fullScreenHeight && (
             <View style={styles.title}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -357,10 +360,11 @@ class Blog extends React.Component {
                 </Text>
               </View>
               <CustomButton
-                title={'UnFollow'}
-                buttonStyle={{ borderColor: '#ccc', borderWidth: 1, height: 40 }}
-                containerStyle={{ width: 120 }}
-                backgroundColor={this.state.follow ? pinkColor : themeColor}
+                title={'Following'}
+                height = {38
+                }
+                containerStyle={{ width: 105 }}
+                backgroundColor={!this.state.follow ? pinkColor : themeColor}
                 onPress={() => this.unFollow(item.userId)}
               />
             </View>
@@ -497,6 +501,7 @@ class Blog extends React.Component {
       userObj: { following },
     } = this.props;
     let { follow, blogs, isBlogs, loading, usersData, isError } = this.state;
+    let sortedBlogs = blogs.sort((a , b) => a.createdAt < b.createdAt)
     return (
       <Drawer
         ref={ref => (this._drawer = ref)}
@@ -530,33 +535,12 @@ class Blog extends React.Component {
           />
           {isBlogs && !!usersData.length && (
             <FlatList
-              data={blogs}
+              data={sortedBlogs}
               keyExtractor={item => item}
               renderItem={({ item, index }) => this.blog(item, index)}
             />
           )}
-          {/* {isError && (
-            <View style={{
-              justifyContent: 'center', alignItems: "center",
-              flex: 1, marginTop: "50%"
-            }}>
-              <Text
-                style={{
-                  fontSize: 19,
-                  color: '#fff',
-                  textAlign: 'center',
-                  marginTop: 30,
-                }}>
-                Follow Bloggers To Get The Blogs
-          </Text>
-              <View style={{ marginVertical: 12 }}>
-                <CustomButton title={'Follow Bloggers'}
-                  backgroundColor={pinkColor}
-                  onPress={() => this.props.navigation.navigate('SearchUsers')}
-                  width={windowScreen / 1.6} />
-              </View>
-            </View>
-          )} */}
+          
           {blogs.length === 0 || isError && (
             <TouchableOpacity style={{
               justifyContent: 'center', alignItems: "center",

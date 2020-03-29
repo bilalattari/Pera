@@ -69,23 +69,7 @@ class App extends Component {
     //   this.setState({ response });
     // });
   }
-  // componentWillUnmount() {
-  //   Linking.removeEventListener('url', this.handleUrl);
-  // }
-
-  // handleUrl = ({ url }) => {
-  //   console.log('URL', url);
-
-  //   Linking.canOpenURL(url).then((supported) => {
-  //     console.log('supported', supported);
-
-  //     if (supported) {
-  //       // this.props.navigation.navigate(ur)
-  //       DeepLinking.evaluateUrl(url);
-  //     }
-  //   });
-  // };
-
+ 
   render() {
     let {showSplash} = this.state
     return (

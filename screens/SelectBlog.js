@@ -11,20 +11,12 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import { SearchBar, Icon } from 'react-native-elements';
-import { NavigationEvents } from 'react-navigation';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Drawer from 'react-native-drawer';
 import firebaseLib from 'react-native-firebase';
 import { connect } from 'react-redux';
 import Video from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
-import CustomInput from '../Component/Input';
-import ControlPanel from '../screens/ControlPanel';
-import CustomButton from '../Component/Button';
 import CustomHeader from '../Component/header';
-
-import { themeColor, pinkColor } from '../Constant';
 class SelectBlog extends React.Component {
   constructor(props) {
     super(props);
@@ -41,12 +33,12 @@ class SelectBlog extends React.Component {
       categoryList: [
         { name: "Photography", image: require('../assets/interest/photography.jpg'), selected: false },
         { name: "Food", image: require('../assets/interest/food.jpg'), selected: false },
-        { name: "Health", image: require('../assets/interest/health.png'), selected: false },
+        { name: "Health", image: require('../assets/interest/health.jpg'), selected: false },
         { name: "Lifestyle", image: require('../assets/interest/lifestyle.jpg'), selected: false },
         { name: "Politics", image: require('../assets/interest/politics.jpg'), selected: false },
         { name: "Sports", image: require('../assets/interest/sports.jpg'), selected: false },
-        { name: "Travel", image: require('../assets/interest/music.jpg'), selected: false },
-        { name: "Music", image: require('../assets/interest/photography.jpg'), selected: false },
+        { name: "Travel", image: require('../assets/interest/travel.jpg'), selected: false },
+        { name: "Music", image: require('../assets/interest/music.jpg'), selected: false },
         { name: "Business", image: require('../assets/interest/business.jpg'), selected: false },
       ],
     };
@@ -57,7 +49,7 @@ class SelectBlog extends React.Component {
 
   componentDidMount() {
     const { selectedIndex } = this.state;
-    this.getBlog('photography', selectedIndex);
+    this.getBlog({ name: 'photography' }, selectedIndex);
   }
   getBlog(item, index) {
     console.log(item.name, 'iteem')
@@ -65,7 +57,7 @@ class SelectBlog extends React.Component {
       { blogsArr: [], loading: true, selectedIndex: index },
       async () => {
         const {
-          userObj: { following , blogCategory },
+          userObj: { following, blogCategory },
         } = this.props;
         const { blogsArr, errMessage } = this.state;
         const db = firebaseLib.firestore();
@@ -83,7 +75,7 @@ class SelectBlog extends React.Component {
           }
           blogs.docs.forEach(blog => {
             if (following.indexOf(blog.data().userId) === -1) {
-            blogsArr.push(blog.data());
+              blogsArr.push(blog.data());
             }
             this.setState({ blogsArr: [...blogsArr] });
           });
@@ -100,7 +92,7 @@ class SelectBlog extends React.Component {
 
   render() {
     const { navigation } = this.props;
-    let { category, blogsArr, errMessage, loading, selectedIndex , categoryList } = this.state;
+    let { category, blogsArr, errMessage, loading, selectedIndex, categoryList } = this.state;
     return (
       <View style={{ backgroundColor: '#323643', flex: 1 }}>
         <CustomHeader navigation={navigation} title={'BLOG'} />
@@ -126,75 +118,77 @@ class SelectBlog extends React.Component {
                     padding: 12,
                     color: selectedIndex === index ? '#fff' : '#bbb',
                     fontSize: 16,
-                    fontWeight : selectedIndex === index ? 'bold' : 'normal',
+                    fontWeight: selectedIndex === index ? 'bold' : 'normal',
                   }}>
-                  {' '}
                   {item.name}
                 </Text>
               </TouchableOpacity>
             )}
           />
         </View>
-        {!!blogsArr.length ? (
-          <FlatList
-            data={blogsArr}
-            numColumns={2}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity style={styles.imageContainer}>
-                {!!item.imageUrl && (
-                  <Image source={{ uri: item.imageUrl }} style={styles.image} />
-                )}
-                {!!item.videoUrl && (
-                  <View
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginVertical: 10,
-                    }}>
-                    {Platform.OS === 'ios' ? (
-                      <Video
-                        source={{ uri: item.videoUrl }}
-                        style={{ width: '100%', height: 250 }}
-                        paused={true}
-                        pictureInPicture={true}
-                        controls={true}
-                        onLoad={() => this.videoIsReady()}
-                        ref={ref => (this.videoRef = ref)}
-                      />
-                    ) : (
-                        <VideoPlayer
+        <ScrollView>
+          <Image source={categoryList[selectedIndex].image} style={{ width: "100%", height: 220, marginVertical: 12, resizeMode: "stretch" }} />
+          {!!blogsArr.length ? (
+            <FlatList
+              data={blogsArr}
+              numColumns={2}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity style={styles.imageContainer}>
+                  {!!item.imageUrl && (
+                    <Image source={{ uri: item.imageUrl }} style={styles.image} />
+                  )}
+                  {!!item.videoUrl && (
+                    <View
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginVertical: 10,
+                      }}>
+                      {Platform.OS === 'ios' ? (
+                        <Video
                           source={{ uri: item.videoUrl }}
-                          videoStyle={{
-                            width: '100%',
-                            height: 160,
-                          }}
-                          style={{
-                            width: '100%',
-                            height: 160,
-                          }}
-                          disableVolume={true}
-                          fullscreen={false}
-                          paused={this.state.paused}
+                          style={{ width: '100%', height: 250 }}
+                          paused={true}
+                          pictureInPicture={true}
+                          controls={true}
                           onLoad={() => this.videoIsReady()}
-                          disablePlayPause={this.state.hidePlayPause}
-                          disableSeekbar={this.state.hideSeekbar}
-                          disableBack={true}
+                          ref={ref => (this.videoRef = ref)}
                         />
-                      )}
-                  </View>
-                )}
-                <View style={{ paddingLeft: 12, marginTop: 4 }}>
-                  <Text style={styles.textHeading}>{item.blog}</Text>
-                  <Text style={{ color: '#ccc' }}>{item.comments.length} Comments</Text>
-                </View >
-              </TouchableOpacity>
+                      ) : (
+                          <VideoPlayer
+                            source={{ uri: item.videoUrl }}
+                            videoStyle={{
+                              width: '100%',
+                              height: 160,
+                            }}
+                            style={{
+                              width: '100%',
+                              height: 160,
+                            }}
+                            disableVolume={true}
+                            fullscreen={false}
+                            paused={this.state.paused}
+                            onLoad={() => this.videoIsReady()}
+                            disablePlayPause={this.state.hidePlayPause}
+                            disableSeekbar={this.state.hideSeekbar}
+                            disableBack={true}
+                          />
+                        )}
+                    </View>
+                  )}
+                  <View style={{ paddingLeft: 12, marginTop: 4 }}>
+                    <Text style={styles.textHeading}>{item.blog}</Text>
+                    <Text style={{ color: '#ccc' }}>{item.comments.length} Comments</Text>
+                  </View >
+                </TouchableOpacity>
+              )}
+            />
+          ) : (
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Text style={styles.errMessage}>{errMessage}</Text>
+              </View>
             )}
-          />
-        ) : (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-              <Text style={styles.errMessage}>{errMessage}</Text>
-            </View>
-          )}
+        </ScrollView>
       </View>
     );
   }

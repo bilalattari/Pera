@@ -29,23 +29,52 @@ class SignUp extends React.Component {
       scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
       webClientId: '1030461806167-rt41rc3og2qq2i4sn22vk0psn0apbscv.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
       offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+      // hostedDomain: 'blogster-20b9d.firebaseapp.com', // specifies a hosted domain restriction
       loginHint: '', // [iOS] The user's ID, or email address, to be prefilled in the authentication UI if possible. [See docs here](https://developers.google.com/identity/sign-in/ios/api/interface_g_i_d_sign_in.html#a0a68c7504c31ab0b728432565f6e33fd)
       forceCodeForRefreshToken: true, // [Android] related to `serverAuthCode`, read the docs link below *.
       accountName: '', // [Android] specifies an account name on the device that should be used
       iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
     });
+
     try {
+      await GoogleSignin.signOut();
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       console.log(userInfo, 'userInfo')
-      let data = userInfo.user
-      const credential = await firebase.auth.GoogleAuthProvider.credential(userInfo.idToken)
-      console.log(credential , 'firebaseUserCredential')
-      // login with credential
-      // const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
-      // console.warn(JSON.stringify(firebaseUserCredential.user.toJSON()));
+      let value = (await GoogleSignin.getTokens({ idToken: userInfo.idToken }))
+      const credential = FirebaseLib.auth.GoogleAuthProvider.credential(value.idToken);
+      const firebaseUserCredential = await FirebaseLib.auth().signInWithCredential(credential);
+      const googleUid = firebaseUserCredential.user.uid
+      console.log(googleUid)
+      const response = await firebase.getDocument('Users', googleUid)
+      let userObj = {}
+      if (response.exists) {
+        userObj = response.data();
+        this.props.loginUser(userObj)
+        this.props.navigation.navigate('App')
+      }else{
+        userObj = {
+          userName: firebaseUserCredential.user.displayName.toLowerCase(),
+          email: firebaseUserCredential.user.email,
+          photoUrl: firebaseUserCredential.user.photoURL,
+          userId: googleUid,
+          followers: [],
+          following: [],
+          userPackage: 'none',
+          userType: 'free',
+          deleted: false,
+          createdAt: Date.now(),
+          country: null
+        }
+        await firebase.setDocument('Users', googleUid, userObj)
+        this.props.loginUser(userObj)
+        this.props.navigation.navigate('BlogCategory') 
+      }
+      // // console.log(credential, 'credential')
+      // FirebaseLib.auth().signInWithCredential(credential).then((user) => {
+      //   console.log("Sign In Success", user);
+      // }).catch((err) => console.log(err))
 
-      // this.setState({ userInfo });
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow

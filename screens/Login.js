@@ -79,7 +79,7 @@ class Login extends React.Component {
       const fbUid = firebaseUserCredential.user.uid
       const response = await firebase.getDocument('Users', fbUid)
       let userObj = {}
-      response.exists
+      // response.exists
       if (response.exists) {
         userObj = response.data();
         this.props.loginUser(userObj)
@@ -120,11 +120,46 @@ class Login extends React.Component {
       accountName: '', // [Android] specifies an account name on the device that should be used
       iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
     });
+
     try {
+      await GoogleSignin.signOut();
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       console.log(userInfo, 'userInfo')
-      // this.setState({ userInfo });
+      let value = (await GoogleSignin.getTokens({ idToken: userInfo.idToken }))
+      const credential = FirebaseLib.auth.GoogleAuthProvider.credential(value.idToken);
+      const firebaseUserCredential = await FirebaseLib.auth().signInWithCredential(credential);
+      const googleUid = firebaseUserCredential.user.uid
+      console.log(googleUid)
+      const response = await firebase.getDocument('Users', googleUid)
+      let userObj = {}
+      if (response.exists) {
+        userObj = response.data();
+        this.props.loginUser(userObj)
+        this.props.navigation.navigate('App')
+      }else{
+        userObj = {
+          userName: firebaseUserCredential.user.displayName.toLowerCase(),
+          email: firebaseUserCredential.user.email,
+          photoUrl: firebaseUserCredential.user.photoURL,
+          userId: googleUid,
+          followers: [],
+          following: [],
+          userPackage: 'none',
+          userType: 'free',
+          deleted: false,
+          createdAt: Date.now(),
+          country: null
+        }
+        await firebase.setDocument('Users', googleUid, userObj)
+        this.props.loginUser(userObj)
+        this.props.navigation.navigate('BlogCategory') 
+      }
+      // // console.log(credential, 'credential')
+      // FirebaseLib.auth().signInWithCredential(credential).then((user) => {
+      //   console.log("Sign In Success", user);
+      // }).catch((err) => console.log(err))
+
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -157,8 +192,8 @@ class Login extends React.Component {
             size={25} />
         </View> */}
         <CustomHeader navigation={navigation} title={'Login'} />
-        <ScrollView style={{ flex: 1,  }}>
-          <View style={{ width: '100%',marginTop : marginTop }}>
+        <ScrollView style={{ flex: 1, }}>
+          <View style={{ width: '100%', marginTop: marginTop }}>
             <Text style={styles.bottomLink}>SIGN IN WIDTH</Text>
             <View
               style={{

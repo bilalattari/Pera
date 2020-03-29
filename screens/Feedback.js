@@ -192,16 +192,16 @@ class Feedback extends React.Component {
               onPress={() => this.setState({ comments: true })}
               title={'Comments'}
               buttonStyle={[styles.commentButton,
-              { borderColor: !comments ? pinkColor : themeColor, borderWidth: 0.5 }]}
-              backgroundColor={!comments ? '#000000' : pinkColor}
+              { borderColor: !comments ? pinkColor : themeColor, borderWidth: 1 }]}
+              backgroundColor={!comments ? themeColor : pinkColor}
               titleStyle={[styles.textPink, { color: comments ? '#fff' : pinkColor }]}
             />
             <CustomButton
               onPress={() => this.setState({ comments: false })}
-              title={'Feedback'}
+              title={'Likes'}
               buttonStyle={[styles.commentButton,
               { borderColor: comments ? pinkColor : themeColor, borderWidth: 0.5 }]}
-              backgroundColor={comments ? '#000000' : pinkColor}
+              backgroundColor={comments ? themeColor : pinkColor}
               titleStyle={[styles.textPink, { color: !comments ? '#fff' : pinkColor }]}
             />
           </View>
@@ -216,7 +216,7 @@ class Feedback extends React.Component {
             !comments && allOthers.length === 0 ?
               <View style={{ flex: 1, justifyContent: 'center', alignItems: "center" }}>
                 <Icon type={'font-awesome'} name={'comment-o'} color={'#fff'} size={60} />
-                <Text style={{ color: "#fff", fontSize: 15  , marginVertical : 12}}>No Feedbacks For You</Text>
+                <Text style={{ color: "#fff", fontSize: 15  , marginVertical : 12}}>No Likes For You</Text>
               </View> : null
           }
           {comments ? (

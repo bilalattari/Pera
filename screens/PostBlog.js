@@ -26,6 +26,8 @@ import { themeColor, pinkColor } from '../Constant';
 import CustomButton from '../Component/Button';
 import firebase from '../utils/firebase';
 const dimensions = Dimensions.get('window');
+import Modal from 'react-native-modal';
+
 const windowHeight = dimensions.height;
 const windowWidth = dimensions.width;
 
@@ -138,6 +140,7 @@ class PostBlog extends React.Component {
       blog,
       userId: userObj.userId,
       mime: '',
+      showModel: false,
       data: '',
     };
 
@@ -161,6 +164,7 @@ class PostBlog extends React.Component {
   }
 
   async uploadMedia() {
+    this.setState({ showModel: false })
     if (Platform.OS === 'android') {
       const result = await this.galleryPermissionAndroid();
       if (result !== RESULTS.GRANTED) return;
@@ -181,6 +185,7 @@ class PostBlog extends React.Component {
 
 
   async uploadVideo() {
+    this.setState({ showModel: false })
     if (Platform.OS === 'android') {
       const result = await this.galleryPermissionAndroid();
       if (result !== RESULTS.GRANTED) return;
@@ -207,6 +212,7 @@ class PostBlog extends React.Component {
       path,
       blogsCategory,
       videoPath,
+      showModel,
       fullScreenHeight,
       fullScreenWidth,
       loading,
@@ -221,6 +227,30 @@ class PostBlog extends React.Component {
           textContent={'Loading...'}
           textStyle={{ color: '#fff' }}
         />
+        {/* {
+          showModel ? */}
+        <Modal
+          isVisible={showModel}
+          onBackdropPress={() => this.setState({ showModel: false })}
+          onBackButtonPress={() => this.setState({ showModel: false })}>
+          <View
+            style={{
+              height: 140,
+              width: '90%',
+              justifyContent: 'space-around',
+              borderRadius: 5,
+              backgroundColor: themeColor,
+            }}>
+            <CustomButton width={'85%'}
+              buttonStyle={styles.border}
+              onPress={() => this.uploadMedia()} title={'Upload Images'} />
+            <CustomButton width={'85%'}
+              buttonStyle={styles.border}
+              onPress={() => this.uploadVideo()} title={'Upload Video'} />
+          </View>
+        </Modal>
+        {/* : null
+        } */}
         {!fullScreenHeight && (
           <View
             style={{
@@ -303,16 +333,16 @@ class PostBlog extends React.Component {
             <Picker
               note
               mode="dropdown"
-              style={{ width: '96%', color: '#fff', alignSelf: 'center' , fontWeight : "bold" }}
+              style={{ width: '96%', color: '#fff', alignSelf: 'center', fontWeight: "bold" }}
               selectedValue={this.state.selected}
-              placeholderIconColor = {'#fff'}
-              itemTextStyle = {{fontWeight : "bold"}}
-              itemStyle = {{height : 40}}
+              placeholderIconColor={'#fff'}
+              itemTextStyle={{ fontWeight: "bold" }}
+              itemStyle={{ height: 40 }}
               onValueChange={this.onValueChange.bind(this)}>
               <Picker.Item label="Select Category" value="" />
               {
                 blogsCategory.map((data, index) =>
-                  <Picker.Item label={data.name} value={data.name.toLowerCase()} />
+                  <Picker.Item key = {index} label={data.name} value={data.name.toLowerCase()} />
                 )
               }
             </Picker>
@@ -320,7 +350,7 @@ class PostBlog extends React.Component {
         )}
         {!!path && !fullScreenHeight && (
           <View style={{ alignItems: 'center', marginVertical: 10 }}>
-            <Image source={{ uri: path }} style={{ width: 180, height: 180 , borderRadius : 5 }} />
+            <Image source={{ uri: path }} style={{ width: 180, height: 180, borderRadius: 5 }} />
           </View>
         )}
         {!!videoPath && (
@@ -370,26 +400,16 @@ class PostBlog extends React.Component {
           </View>
         )}
         {!fullScreenHeight && (
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' , marginVertical : 12 }}>
-            <CustomButton
-              title={'Upload'}
-              buttonStyle={{
-                borderColor: '#ccc',
-                borderWidth: 1,
-                marginVertical: 10,
-              }}
-              onPress={() => this.uploadMedia()}
-            />
-            <CustomButton
-              title={'Upload Video'}
-              buttonStyle={{
-                borderColor: '#ccc',
-                borderWidth: 1,
-                marginVertical: 10,
-              }}
-              onPress={() => this.uploadVideo()}
-            />
-          </View>
+          <CustomButton
+            title={'Upload'}
+            buttonStyle={{
+              borderColor: '#ccc',
+              borderWidth: 1,
+              marginVertical: 21,
+            }}
+            width={'90%'}
+            onPress={() => this.setState({ showModel: true })}
+          />
         )}
       </ScrollView>
     );
@@ -401,6 +421,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: themeColor,
   },
+  border: { borderRadius: 4, borderColor: '#ccc', borderWidth: 0.5 }
 });
 
 const mapDispatchToProps = dispatch => {
