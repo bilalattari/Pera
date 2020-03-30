@@ -7,7 +7,6 @@ import {
   View,
   TouchableOpacity,
   FlatList,
-  Text,
   ScrollView,
   Platform,
 } from 'react-native';
@@ -15,6 +14,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import firebaseLib from 'react-native-firebase';
 import { connect } from 'react-redux';
 import Video from 'react-native-video';
+import Text from '../Component/Text'
 import VideoPlayer from 'react-native-video-controls';
 import CustomHeader from '../Component/header';
 class SelectBlog extends React.Component {
@@ -74,7 +74,7 @@ class SelectBlog extends React.Component {
             this.setState({ errMessage: 'Sorry no Blogs found', blogsArr: [] });
           }
           blogs.docs.forEach(blog => {
-            if (following.indexOf(blog.data().userId) === -1) {
+            if (following.indexOf(blog.data().userId) !== -1) {
               blogsArr.push(blog.data());
             }
             this.setState({ blogsArr: [...blogsArr] });
@@ -91,7 +91,7 @@ class SelectBlog extends React.Component {
   }
 
   render() {
-    const { navigation } = this.props;
+    const { navigation  , fontfamily} = this.props;
     let { category, blogsArr, errMessage, loading, selectedIndex, categoryList } = this.state;
     return (
       <View style={{ backgroundColor: '#323643', flex: 1 }}>
@@ -114,14 +114,12 @@ class SelectBlog extends React.Component {
             renderItem={({ item, index }) => (
               <TouchableOpacity onPress={() => this.getBlog(item, index)}>
                 <Text
-                  style={{
-                    padding: 12,
-                    color: selectedIndex === index ? '#fff' : '#bbb',
-                    fontSize: 16,
-                    fontWeight: selectedIndex === index ? 'bold' : 'normal',
-                  }}>
-                  {item.name}
-                </Text>
+                fontFamily = {fontfamily}
+                  align = {'left'}
+                  text={item.name}
+                  style={{ padding: 12}}
+                  color={selectedIndex === index ? '#fff' : '#bbb'}
+                  bold={selectedIndex === index ? 'bold' : 'normal'} />
               </TouchableOpacity>
             )}
           />
@@ -177,15 +175,15 @@ class SelectBlog extends React.Component {
                     </View>
                   )}
                   <View style={{ paddingLeft: 12, marginTop: 4 }}>
-                    <Text style={styles.textHeading}>{item.blog}</Text>
-                    <Text style={{ color: '#ccc' }}>{item.comments.length} Comments</Text>
+                    <Text fontFamily = {fontfamily} align = {'left'} text={item.blog} bold={true} />
+                    <Text fontFamily = {fontfamily} align = {'left'} color={'#ccc'} text={item.comments.length + '  comments'} />
                   </View >
                 </TouchableOpacity>
               )}
             />
           ) : (
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <Text style={styles.errMessage}>{errMessage}</Text>
+                <Text fontFamily = {fontfamily} text={errMessage} style={styles.errMessage} />
               </View>
             )}
         </ScrollView>
@@ -206,7 +204,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginVertical: 4,
   },
-  textHeading: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   drawer: { shadowColor: '#000000', shadowOpacity: 0.8, shadowRadius: 3 },
   main: { paddingLeft: 3 },
   errMessage: { color: '#fff', textAlign: 'center', fontSize: 20, marginTop: 20 },
@@ -218,6 +215,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   return {
     userObj: state.auth.user,
+    fontfamily: state.font.fontFamily
   };
 };
 

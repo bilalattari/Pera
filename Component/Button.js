@@ -14,11 +14,12 @@ export default CustomButton = props => (
         end={{ x: 1, y: 0 }}
         colors={['#FF6B98', '#FE787E', '#FE8663']}
         style={[{
-          height: props.height ? props.height : 50, width: props.width ? props.width:  140, borderRadius: 25, alignSelf : 'center',
+          height: props.height ? props.height : 50, width: props.width ? props.width : 140,
+          borderRadius: 25, alignSelf: 'center',
           justifyContent: "center", alignItems: "center"
-        }, props.containerStyle , props.buttonStyle]}
+        }, props.containerStyle, props.buttonStyle]}
       >
-        <Text text={props.title} bold = {true} style = {props.titleStyle} />
+        <Text text={props.title} fontFamily = {props.fontFamily} bold={true} style={props.titleStyle} />
       </LinearGradient>
     </TouchableOpacity> :
     <Button

@@ -203,7 +203,7 @@ class PostBlog extends React.Component {
   }
 
   render() {
-    const { navigation } = this.props;
+    const { navigation , fontfamily } = this.props;
     const {
       blogTitle,
       blog,
@@ -287,12 +287,14 @@ class PostBlog extends React.Component {
               marginVertical: 12,
             }}>
             <CustomButton
+              fontFamily = {fontfamily}
               title={'Close'}
               buttonStyle={{ borderColor: '#ccc', borderWidth: 1 }}
               onPress={() => this.back()}
             />
             <CustomButton
               title={'Publish'}
+              fontFamily = {fontfamily}
               backgroundColor={pinkColor}
               onPress={() => this.publishBlog()}
             />
@@ -312,6 +314,7 @@ class PostBlog extends React.Component {
                 color: '#fff',
                 fontWeight: 'bold',
                 minHeight: 80,
+                fontFamily : fontfamily,
                 textDecorationLine: "none",
                 borderBottomColor: '#ccc',
                 borderBottomWidth: 1,
@@ -328,16 +331,16 @@ class PostBlog extends React.Component {
               onChangeText={text => this.setState({ blog: text })}
               placeholder={'Your Blog'}
               placeholderTextColor={'#fff'}
-              inputStyle={{ color: '#fff', letterSpacing: 2 }}
+              inputStyle={{ color: '#fff', letterSpacing: 2  , fontFamily : fontfamily }}
             />
             <Picker
               note
               mode="dropdown"
-              style={{ width: '96%', color: '#fff', alignSelf: 'center', fontWeight: "bold" }}
+              style={{ width: '96%', color: '#fff', alignSelf: 'center', fontWeight: "bold" , fontFamily : fontfamily}}
               selectedValue={this.state.selected}
               placeholderIconColor={'#fff'}
               itemTextStyle={{ fontWeight: "bold" }}
-              itemStyle={{ height: 40 }}
+              itemStyle={{ height: 40 , fontFamily : fontfamily }}
               onValueChange={this.onValueChange.bind(this)}>
               <Picker.Item label="Select Category" value="" />
               {
@@ -402,6 +405,7 @@ class PostBlog extends React.Component {
         {!fullScreenHeight && (
           <CustomButton
             title={'Upload'}
+            fontFamily = {fontfamily}
             buttonStyle={{
               borderColor: '#ccc',
               borderWidth: 1,
@@ -430,6 +434,8 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   return {
     userObj: state.auth.user,
+    fontfamily: state.font.fontFamily
+
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(PostBlog);

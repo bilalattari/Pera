@@ -15,7 +15,7 @@ import {SearchBar, Icon} from 'react-native-elements';
 import CustomInput from '../Component/Input';
 import CustomButton from '../Component/Button';
 import CustomHeader from '../Component/header';
-const {width: screenWidth} = Dimensions.get('window');
+const {width: screenWidth , height : screenHeight} = Dimensions.get('window');
 import {SwipeListView} from 'react-native-swipe-list-view';
 import Carousel, {ParallaxImage, Pagination} from 'react-native-snap-carousel';
 import {themeColor, pinkColor} from '../Constant';
@@ -202,7 +202,7 @@ class Payment extends React.Component {
             <View style={{flex: 1, justifyContent: 'space-around'}}>
               <ParallaxImage
                 source={item.illustration}
-                containerStyle={{height: 220}}
+                containerStyle={{height:screenHeight/1.8 , borderRadius : 15}}
                 style={{borderRadius: 10}}
                 parallaxFactor={0.4}
                 {...parallaxProps}
@@ -295,6 +295,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   return {
     userObj: state.auth.user,
+    fontFamily : state.font.fontFamily
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Payment);

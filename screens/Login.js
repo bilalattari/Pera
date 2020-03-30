@@ -94,6 +94,7 @@ class Login extends React.Component {
           followers: [],
           following: [],
           userPackage: 'none',
+          fontFamily : 'NotoSans-Regular',
           userType: 'free',
           deleted: false,
           createdAt: Date.now(),
@@ -147,6 +148,7 @@ class Login extends React.Component {
           following: [],
           userPackage: 'none',
           userType: 'free',
+          fontFamily : 'NotoSans-Regular',
           deleted: false,
           createdAt: Date.now(),
           country: null

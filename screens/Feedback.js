@@ -64,7 +64,7 @@ class Feedback extends React.Component {
       .onSnapshot(snapShot => {
         if (snapShot.empty) {
           this.setState({
-            loading: false, isError: true, allComments: [], allOthers: []
+            loading: false, isError: true, allComments: undefined, allOthers: undefined
           })
           return
         }
@@ -198,7 +198,7 @@ class Feedback extends React.Component {
             />
             <CustomButton
               onPress={() => this.setState({ comments: false })}
-              title={'Likes'}
+              title={'Feedback'}
               buttonStyle={[styles.commentButton,
               { borderColor: comments ? pinkColor : themeColor, borderWidth: 0.5 }]}
               backgroundColor={comments ? themeColor : pinkColor}
@@ -206,22 +206,16 @@ class Feedback extends React.Component {
             />
           </View>
           {
-            comments && allComments.length === 0 ?
+            comments && !allComments ?
               <View style={{ flex: 1, justifyContent: 'center', alignItems: "center" }}>
                 <Icon type={'ionicon'} name={'ios-notifications-outline'} color={'#fff'} size={60} />
                 <Text style={{ color: "#fff", fontSize: 15 }}>No Comments For You</Text>
               </View> : null
           }
-          {
-            !comments && allOthers.length === 0 ?
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: "center" }}>
-                <Icon type={'font-awesome'} name={'comment-o'} color={'#fff'} size={60} />
-                <Text style={{ color: "#fff", fontSize: 15  , marginVertical : 12}}>No Likes For You</Text>
-              </View> : null
-          }
+         
           {comments ? (
             <SwipeListView
-              data={allComments}
+              data={allComments ?allComments : [] }
               renderItem={(data, rowMap) => this.swipListItem(data, rowMap)}
               renderHiddenItem={(data, rowMap) => (
                 <View
@@ -243,11 +237,18 @@ class Feedback extends React.Component {
             />
           ) : (
               <FlatList
-                data={allOthers}
+                data={allOthers ? allOthers : []}
                 keyExtractor={item => item}
                 renderItem={({ item, index }) => this.feedBackListItem(item, index)}
               />
             )}
+             {
+            !comments && !allOthers  ?
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: "center" }}>
+                <Icon type={'font-awesome'} name={'comment-o'} color={'#fff'} size={60} />
+                <Text style={{ color: "#fff", fontSize: 15  , marginVertical : 12}}>No Likes For You</Text>
+              </View> : null
+          }
         </View>
       </Drawer>
     );

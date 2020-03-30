@@ -12,7 +12,6 @@ const emptyChart = (data) =>{
         data
     }
 } 
-
 export {
     addToChart,
     emptyChart

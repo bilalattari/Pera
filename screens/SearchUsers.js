@@ -66,7 +66,7 @@ class SearchUsers extends Component {
     var users = [];
     const db = firebaseLib.firestore();
     try {
-      const userData = await db.collection('Users').orderBy('email').limit(15).get();
+      const userData = await db.collection('Users').orderBy('email').limit(40).get();
       userData.docs.forEach(item => {
         if (!item.data().deleted) {
           users.unshift(item.data())

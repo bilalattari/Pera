@@ -7,7 +7,6 @@ import {
   View,
   TouchableOpacity,
   FlatList,
-  Text,
   ScrollView,
 } from 'react-native';
 import {SearchBar, Icon, Input} from 'react-native-elements';
@@ -23,8 +22,9 @@ import Dialogue from '../Component/Dialogue';
 // import DialogInput from 'react-native-dialog-input';
 import InputModal from '../Component/InputModal';
 import {logoutUser} from '../redux/actions/authActions';
+import {changeFontFamily} from '../redux/actions/fontaction';
 import {StackActions, NavigationActions} from 'react-navigation';
-
+import Text from '../Component/Text'
 import CustomButton from '../Component/Button';
 import CustomHeader from '../Component/header';
 import {themeColor, pinkColor} from '../Constant';
@@ -40,6 +40,7 @@ class EditProfile extends React.Component {
       showDialogue: false,
       inputDialogueShow: false,
       password: '',
+      fontFamily : "",
       number: null
     };
   }
@@ -71,10 +72,10 @@ class EditProfile extends React.Component {
     this.setState({photoUrl: image.path});
   }
 
-  onValueChange(value) {
+  onValueChange =(value) =>{
     this.setState({
-      selected: value,
-    });
+      fontFamily: value,
+    } , ()=> this.props.changeFontFamily(this.state.fontFamily));
   }
 
   async updateProfile() {
@@ -82,7 +83,7 @@ class EditProfile extends React.Component {
       userObj: {userId},
       navigation,
     } = this.props;
-    let {photoUrl, userName, country, number} = this.state;
+    let {photoUrl, userName, country, number , fontFamily} = this.state;
     this.setState({loading: true});
     if (photoUrl && !photoUrl.includes('https')) {
       photoUrl = await firebase.uploadImage(photoUrl, userId);
@@ -91,6 +92,7 @@ class EditProfile extends React.Component {
       photoUrl,
       userName,
       country,
+      fontFamily,
       number
     };
     try {
@@ -116,23 +118,8 @@ class EditProfile extends React.Component {
     const db = firebaseLib.firestore();
     const {userObj, logoutUser, navigation} = this.props;
     const {email, userId} = userObj;
-    // const user = firebaseLib.auth().currentUser;
-    // const credential = {
-    //   email,
-    //   password,
-    // };
     try {
-      // var credentials = firebaseLib.auth.EmailAuthProvider.credential(
-      //   email,
-      //   password,
-      // );
-      // const reAuthenticate = await user.reauthenticateWithCredential(
-      //   credentials,
-      // );
       firebase.updateDoc('Users', userId, {deleted: true});
-      // const response = await user.delete();
-      // await firebase.deleteDoc('Users' , userId)
-
       logoutUser();
       navigation.navigate('Auth');
     } catch (e) {
@@ -160,6 +147,7 @@ class EditProfile extends React.Component {
       showDialogue,
       inputDialogueShow,
       number,
+      fontFamily,
     } = this.state;
     return (
       <ScrollView
@@ -191,39 +179,22 @@ class EditProfile extends React.Component {
             )}
           </View>
           <TouchableOpacity onPress={() => this.changePicture()}>
-            <Text style={{color: pinkColor, fontSize: 15, marginTop: -12}}>
-              {' '}
-              Change Profile Picture{' '}
-            </Text>
+            <Text text= {'Change Profile Picture'} color = {pinkColor} font = {15} style = {{marginTop: -12}} />
           </TouchableOpacity>
         </View>
         <Input
           placeholder={'User name'}
           containerStyle={{width: '100%'}}
-          inputStyle={styles.inputStyle}
+          inputStyle={[styles.inputStyle , {fontFamily : this.props.fontFamily}]}
           placeholderTextColor={'#bbb'}
           inputContainerStyle={styles.inputContainer}
           value={userName}
           onChangeText={userName => this.setState({userName})}
         />
-        {/* <View style={styles.picker}>
-          <Picker
-            note
-            mode="dropdown"
-            style={{width: '50%', color: '#bbb', alignItems: 'flex-end'}}
-            selectedValue={this.state.selected}
-            onValueChange={this.onValueChange.bind(this)}>
-            <Picker.Item label="New Country" value="key0" />
-            <Picker.Item label="ATM Card" value="key1" />
-            <Picker.Item label="Debit Card" value="key2" />
-            <Picker.Item label="Credit Card" value="key3" />
-            <Picker.Item label="Net Banking" value="key4" />
-          </Picker>
-        </View> */}
         <Input
           placeholder={'Country'}
           containerStyle={{width: '100%'}}
-          inputStyle={styles.inputStyle}
+          inputStyle={[styles.inputStyle , {fontFamily : this.props.fontFamily}]}
           placeholderTextColor={'#bbb'}
           inputContainerStyle={styles.inputContainer}
           value={country}
@@ -232,13 +203,25 @@ class EditProfile extends React.Component {
         <Input
           placeholder={'Phone number with country code'}
           containerStyle={{width: '100%'}}
-          inputStyle={styles.inputStyle}
+          inputStyle={[styles.inputStyle , {fontFamily : this.props.fontFamily}]}
           placeholderTextColor={'#bbb'}
           inputContainerStyle={styles.inputContainer}
           value={number}
           onChangeText={number => this.setState({number})}
           keyboardType='name-phone-pad'
         />
+        <View style={styles.picker}>
+          <Picker
+            note
+            mode="dropdown"
+            style={{width: '50%', color: '#bbb', alignItems: 'flex-end'}}
+            selectedValue={fontFamily}
+            onValueChange={this.onValueChange.bind(this)}>
+            <Picker.Item label="Nato Sens" value="NotoSans-Regular" />
+            <Picker.Item label="OpenSans Regular" value="OpenSans-Regular" />
+            <Picker.Item label="Source Sans Pro Regular" value="SourceSansPro-Regular" />
+          </Picker>
+        </View>
         <View
           style={{
             borderBottomColor: '#444B60',
@@ -271,27 +254,6 @@ class EditProfile extends React.Component {
             handleOk={() => this.startDeletingUser()}
           />
         )}
-        {/* <DialogInput
-          isDialogVisible={inputDialogueShow}
-          title={'Re-aunthenticate'}
-          message={'Re-submit your password'}
-          hintInput={'passowrd'}
-          submitInput={(password)=> this.startDeletingUser(password)}
-          closeDialog={() => {
-            this.setState({ inputDialogueShow: false });
-          }}></DialogInput> */}
-
-        {/* <InputModal
-          visible={inputDialogueShow}
-          secureTextEntry={true}
-          placeholder="Password"
-          title="Re-enter Password"
-          description="This action requires re-authentication"
-          cancelText="Cancle"
-          submitText="Submit"
-          onCancel={() => this.setState({inputDialogueShow: false})}
-          onSubmit={password => this.startDeletingUser(password)}
-        /> */}
       </ScrollView>
     );
   }
@@ -349,15 +311,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
   },
 });
-
 const mapDispatchToProps = dispatch => {
   return {
     logoutUser: userData => dispatch(logoutUser(userData)),
+    changeFontFamily : fontFamily => dispatch(changeFontFamily(fontFamily)),
   };
 };
 const mapStateToProps = state => {
   return {
     userObj: state.auth.user,
+    fontFamily : state.font.fontFamily
   };
 };
 

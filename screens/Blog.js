@@ -7,7 +7,6 @@ import {
   View,
   TouchableOpacity,
   FlatList,
-  Text,
   ScrollView,
   Dimensions,
   Platform,
@@ -15,6 +14,7 @@ import {
   Linking,
 } from 'react-native';
 import { SearchBar, Icon } from 'react-native-elements';
+import Text from '../Component/Text'
 import CustomInput from '../Component/Input';
 import CustomButton from '../Component/Button';
 import CustomHeader from '../Component/header';
@@ -26,9 +26,9 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { connect } from 'react-redux';
 import firebaseLib from 'react-native-firebase';
 import { loginUser } from '../redux/actions/authActions';
+import { changeFontFamily } from '../redux/actions/fontaction';
 import ControlPanel from '../screens/ControlPanel';
 import Drawer from 'react-native-drawer';
-
 import { themeColor, pinkColor } from '../Constant';
 import { NavigationEvents } from 'react-navigation';
 const dimensions = Dimensions.get('window');
@@ -57,8 +57,12 @@ class Blog extends React.Component {
   };
 
   async componentDidMount() {
+    // console.log(this.props.userObj.fontFamily , '-------------')
+    if(this.props.userObj.fontFamily){
+      this.props.changeFontFamily(this.props.userObj.fontFamily)
+    }
     this.getBlogs()
-      // this.props.navigation.addListener('didBlur', () => this.closeControlPanel())
+    // this.props.navigation.addListener('didBlur', () => this.closeControlPanel())
   }
   getBlogs = async () => {
     // this.setState({ loading: true });
@@ -148,11 +152,10 @@ class Blog extends React.Component {
                     item => item.id === change.doc.id,
                   );
                   blogs[findedIndex] = { id: change.doc.id, ...change.doc.data() };
-                  
+
                   this.setState({ blogs });
                 }
               });
-              // console.log('snapShot ====>' , snapShot);
               this.setState({ usersIds }, () => {
                 this.gettingUsersInfo();
               });
@@ -330,7 +333,7 @@ class Blog extends React.Component {
 
   blog = (item, index) => {
     const {
-      userObj: { userId },
+      userObj: { userId },fontfamily
     } = this.props;
     const { usersData } = this.state;
     usersData.map(user => {
@@ -338,12 +341,11 @@ class Blog extends React.Component {
         item.userObj = user;
       }
     });
-    console.log(item , 'itemmmmmmmmmmmmmmmmmmm')
     return (
       this.props.userObj.userId !== item.userId && (
-        <TouchableOpacity key={index} 
-        onPress={() => this.navigateToDetail(item)}
-        style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
+        <TouchableOpacity key={index}
+          onPress={() => this.navigateToDetail(item)}
+          style={{ width: '95%', marginVertical: 12, alignSelf: "center" }}>
           {!this.state.fullScreenHeight && (
             <View style={styles.title}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -355,13 +357,13 @@ class Blog extends React.Component {
                   }
                   style={styles.imageStyle}
                 />
-                <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold', paddingLeft: 8 }}>
-                  {item.userObj.userName}
-                </Text>
+                <Text fontFamily={fontfamily}
+                  text={item.userObj.userName} font={16} bold={true} style={{ paddingLeft: 8 }} />
               </View>
               <CustomButton
+               fontFamily = {fontfamily}
                 title={'Following'}
-                height = {38
+                height={38
                 }
                 containerStyle={{ width: 105 }}
                 backgroundColor={!this.state.follow ? pinkColor : themeColor}
@@ -432,14 +434,14 @@ class Blog extends React.Component {
           )}
           {!this.state.fullScreenHeight && (
             <TouchableOpacity onPress={() => this.navigateToDetail(item)}>
-              <Text style={styles.blogHeading}>{item.blogTitle}</Text>
+              <Text fontFamily={fontfamily}
+                align={'left'} font={19} bold={true} style={styles.blogHeading} text={item.blogTitle} />
             </TouchableOpacity>
           )}
           {!this.state.fullScreenHeight && (
             <TouchableOpacity>
-              <Text style={styles.likes}>
-                {`Likes ${item.likes.length} Comments ${item.comments.length}`}
-              </Text>
+              <Text fontFamily={fontfamily}
+                align={'left'} style={styles.likes} text={`Likes ${item.likes.length} Comments ${item.comments.length}`} />
             </TouchableOpacity>
           )}
           {!this.state.fullScreenHeight && (
@@ -473,7 +475,7 @@ class Blog extends React.Component {
 
     const {
       userObj: { userId },
-      navigation,
+      navigation,fontfamily
     } = this.props;
     try {
       this.setState({ loading: true });
@@ -497,11 +499,11 @@ class Blog extends React.Component {
   }
   render() {
     const {
-      navigation,
+      navigation, fontfamily,
       userObj: { following },
     } = this.props;
     let { follow, blogs, isBlogs, loading, usersData, isError } = this.state;
-    let sortedBlogs = blogs.sort((a , b) => a.createdAt < b.createdAt)
+    let sortedBlogs = blogs.sort((a, b) => a.createdAt < b.createdAt)
     return (
       <Drawer
         ref={ref => (this._drawer = ref)}
@@ -540,23 +542,16 @@ class Blog extends React.Component {
               renderItem={({ item, index }) => this.blog(item, index)}
             />
           )}
-          
+
           {blogs.length === 0 || isError && (
             <TouchableOpacity style={{
               justifyContent: 'center', alignItems: "center",
               flex: 1, marginTop: "50%"
             }} onPress={() => navigation.navigate('SearchUsers')}>
               <Icon type={'material-community'} name={'blogger'} color={'#fff'} size={60} />
-              <Text
-                style={{
-                  fontSize: 19,
-                  color: pinkColor,
-                  textAlign: 'center',
-                  marginTop: 30,
-                }}>
-                Follow Bloggers
-            </Text>
-
+              <Text fontFamily={fontfamily} style={{
+                marginTop: 30,
+              }} text={'Follow Bloggers'} font={19} color={pinkColor} align={'center'} />
             </TouchableOpacity>
           )}
         </ScrollView>
@@ -583,9 +578,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   blogHeading: {
-    color: '#fff',
-    fontSize: 19,
-    fontWeight: 'bold',
+
     paddingLeft: 12,
     marginVertical: 2,
   },
@@ -602,11 +595,13 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = dispatch => {
   return {
     loginUser: userData => dispatch(loginUser(userData)),
+    changeFontFamily : fontFamily => dispatch(changeFontFamily(fontFamily)),
   };
 };
 const mapStateToProps = state => {
   return {
     userObj: state.auth.user,
+    fontfamily: state.font.fontFamily
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Blog);

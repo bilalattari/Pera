@@ -29,6 +29,7 @@ class EmailAccount extends React.Component {
       confirmPassword: null,
       userName: null,
       number: null,
+      fontFamily : 'NotoSans-Regular',
       country: null
     };
   }
@@ -53,7 +54,7 @@ class EmailAccount extends React.Component {
   };
 
   async signUp() {
-    const { userName, email, password, number, country } = this.state;
+    const { userName, email, password, number, country , fontFamily } = this.state;
     const { navigation } = this.props;
     const db = firebaseLib.firestore();
     if (this.checkValidation()) return;
@@ -74,6 +75,7 @@ class EmailAccount extends React.Component {
         password,
         userName.toLowerCase(),
         number,
+        fontFamily,
         country
       );
       this.props.loginUser(response);

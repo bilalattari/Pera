@@ -87,7 +87,7 @@ class Profile extends React.Component {
         msg: 'started following you.',
         userName: userName,
         userID: userId,
-        receiver : otherUserId,
+        receiver: otherUserId,
         photoUrl: photoUrl,
         type: 'follow',
         time: `${new Date().toLocaleString()}`
@@ -131,7 +131,7 @@ class Profile extends React.Component {
         msg: 'unfollowed you.',
         userName: userName,
         userID: userId,
-        receiver : otherUserId,
+        receiver: otherUserId,
         photoUrl: photoUrl,
         type: 'follow',
         time: `${new Date().toLocaleString()}`
@@ -206,84 +206,73 @@ class Profile extends React.Component {
         />
         <CustomHeader
           title={'PROFILE'}
-          // rightIcon
           navigation={navigation} />
-        <View style={{ alignSelf: 'center', width: '60%', alignItems: 'center' }}>
-          <View style={styles.imageWrapper}>
-            {photoUrl ? (
-              <Image
-                source={{ uri: photoUrl }}
-                style={[styles.imageStyle, { borderRadius: 125 }]}
-              />
-            ) : (
+        <View style={{
+          flexDirection: "row", justifyContent: "space-around",
+          marginVertical: 25
+        }}>
+          <View style={{ alignSelf: 'center', alignItems: 'center' }}>
+            <View style={styles.imageWrapper}>
+              {photoUrl ? (
                 <Image
-                  source={require('../assets/avatar.png')}
+                  source={{ uri: photoUrl }}
                   style={[styles.imageStyle, { borderRadius: 125 }]}
                 />
-              )}
+              ) : (
+                  <Image
+                    source={require('../assets/avatar.png')}
+                    style={[styles.imageStyle, { borderRadius: 125 }]}
+                  />
+                )}
+            </View>
+            <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold', marginTop: 8 }}>
+              {userName}
+            </Text>
+            <Text style={{ color: '#ccc', }}>Graphic Designer</Text>
           </View>
-          <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}>
-            {userName}
-          </Text>
-          <Text style={{ color: '#ccc', margin: 12 }}>Graphic Designer</Text>
+          <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 25 }}>
+            {!!userId && userId !== userObj.userId && (
+              <View>
+                {isFollowed ? (
+                  <CustomButton
+                    title="Following"
+                    backgroundColor={pinkColor}
+                    width={110}
+                    height={48}
+                    onPress={() => this.unFollow(userId)}
+                  />
+                ) : (
+                    <CustomButton
+                      title="Follow"
+                      backgroundColor={pinkColor}
+                      width={110}
+                      height={48}
+                      onPress={() => this.follow(userId)}
+                    />
+                  )}
+              </View>
+            )}
+            {userObj.userId === userId && (
+              <TouchableOpacity style={{
+                height: 50, width: 50, borderRadius: 125, justifyContent: "center", alignItems: "center",
+                borderColor: '#ccc', borderWidth: 0.5, marginLeft: 4
+              }}>
+                <Icon type={'material-community'} name={'pencil-outline'}
+                  color={"#ccc"} size={30} />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
         <View style={styles.statsView}>
           {!!userData && this.statsNumber('FOLLOWING', following.length)}
           {!!userData && this.statsNumber('FOLLOWER', followers.length)}
-          {!!userId && userId !== userObj.userId && (
-            <View>
-              {isFollowed ? (
-                <CustomButton
-                  title="UnFollow"
-                  backgroundColor={pinkColor}
-                  onPress={() => this.unFollow(userId)}
-                />
-              ) : (
-                  <CustomButton
-                    title="Follow"
-                    backgroundColor={pinkColor}
-                    onPress={() => this.follow(userId)}
-                  />
-                )}
-            </View>
-          )}
         </View>
-        {userObj.userId === userId && (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              marginHorizontal: '6%',
-              height: 50,
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('EditProfile')}>
-              <Icon
-                type={'font-awesome'}
-                name={'edit'}
-                color={'#fff'}
-                size={25}
-              />
-            </TouchableOpacity>
-            {/* <TouchableOpacity>
-              <Icon
-                type={'font-awesome'}
-                name={'image'}
-                color={'#fff'}
-                size={25}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Icon
-                type={'font-awesome'}
-                name={'edit'}
-                color={'#fff'}
-                size={25}
-              />
-            </TouchableOpacity> */}
-          </View>
-        )}
+
+
+        <Text style={{
+          margin: 6, fontWeight: "bold", color: "#fff",
+          fontSize: 20, letterSpacing: 1
+        }}>BLOGS</Text>
         <View
           style={{
             backgroundColor: themeColor,
@@ -295,7 +284,7 @@ class Profile extends React.Component {
               blogs.map((data, index) => {
                 return (
                   <TouchableOpacity
-                    style={{ height: 110, width: '32%', margin: 1, }}
+                    style={{ height: 120, width: 125, margin: 2, }}
                     onPress={() => this.navigateToDetails(data, userData)}
                   >
                     <Image
@@ -303,6 +292,7 @@ class Profile extends React.Component {
                       style={{
                         height: '100%',
                         width: '100%',
+                        borderRadius: 5,
                         resizeMode: 'stretch',
                       }}
                     />
@@ -372,7 +362,6 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 125,
     borderColor: pinkColor,
-    marginVertical: 25,
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -381,13 +370,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
+    marginBottom: 12,
     height: 100,
-    borderTopColor: '#ccc',
-    borderBottomColor: '#BBB',
-    borderWidth: 0.5,
+    borderTopColor: 'grey',
+    borderBottomColor: 'grey',
+    borderWidth: 5,
   },
   heading: { color: 'grey', fontSize: 14, fontWeight: 'bold', margin: 4 },
-  number: { color: '#fff', fontSize: 16, textAlign: 'center' },
+  number: { color: '#fff', fontSize: 20, textAlign: 'center' },
 });
 const mapDispatchToProps = dispatch => {
   return {};
@@ -395,6 +385,7 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
   return {
     userObj: state.auth.user,
+
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
